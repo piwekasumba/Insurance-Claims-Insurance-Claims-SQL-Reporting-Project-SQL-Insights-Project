@@ -1,43 +1,60 @@
-• Insurance Claims Analysis (SQL Project)
+#  Insurance Claims Analysis (SQL Project) 
 
-This project focuses on cleaning and analyzing insurance claims data using PostgreSQL.
+This project is part of my SQL learning portfolio focused on building real-world data analysis and data engineering fundamentals using PostgreSQL.
 
-The dataset contains issues commonly found in real-world data such as:
+This project focuses on using SQL to clean, transform, and analyse insurance claims data.
 
-missing values
-duplicate records
-inconsistent categories
-unstructured information
+---
 
-The goal of the project was to take raw insurance claims data and turn it into a cleaner, more usable dataset for reporting and analysis.
+## • Real-world Data Challenges
 
-• What I Worked On
+The dataset contains common issues found in real business data:
 
-In this project, I used SQL to:
+- missing values  
+- duplicate records  
+- inconsistent categories  
+- unstructured data  
 
-clean and standardize raw data
-handle null and duplicate values
-join related tables
-create analysis-focused queries
-explore business-related claim trends
+---
 
-I also focused on writing readable SQL queries and structuring the workflow step-by-step to better understand how raw data is prepared before reporting or dashboarding.
+## • What I Worked On
 
-• Tools Used
+In this project, I used SQL to simulate real data workflow tasks including:
 
-PostgreSQL
-SQL
-Git & GitHub
+- cleaning and standardising raw data  
+- handling missing and duplicate values  
+- joining related tables  
+- creating analysis-ready datasets  
+- exploring basic business insights  
 
-• Project Contents
+---
 
-Data cleaning queries
-Transformation queries
-Exploratory analysis queries
-Business insight examples
+## • How I Approached It
 
-• Example Query
+I focused on thinking in terms of raw data → cleaned data → analysis-ready output, rather than just writing isolated SQL queries.
 
+---
+
+## • Tools Used
+
+PostgreSQL  
+SQL  
+Git & GitHub  
+
+---
+
+## • Project Contents
+
+- Data cleaning queries  
+- Transformation queries  
+- Exploratory analysis queries  
+- Business insight examples  
+
+---
+
+## • Example SQL Query
+
+```sql
 SELECT 
     customer_id,
     SUM(claim_amount) AS total_claim_value
