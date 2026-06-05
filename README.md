@@ -1,12 +1,12 @@
 Insurance Claims Risk Analytics SQL Insights Project
 
-- Business Problem:
+ Business Problem:
 
 Insurance companies process large volumes of claims every day. Without proper analysis, it becomes difficult to identify high-risk claim categories, monitor claim costs, and understand patterns that may impact profitability.
 
 This project demonstrates how SQL can be used to transform raw insurance claims data into actionable business insights that support risk management and operational decision-making.
 
-- Project Objectives:
+ Project Objectives:
 
 • Analyze insurance claims data using SQL
 • Identify high-risk claim categories
@@ -14,7 +14,7 @@ This project demonstrates how SQL can be used to transform raw insurance claims 
 • Discover trends that could influence business performance
 • Demonstrate practical SQL analysis techniques used by data analysts
 
-- Tools Used:
+ Tools Used:
   
 • SQL
 • Relational Database Concepts
@@ -24,7 +24,7 @@ This project demonstrates how SQL can be used to transform raw insurance claims 
 • Joins
 • Common Business KPI Analysis
 
-- Skills Demonstrated:
+ Skills Demonstrated:
  
 • Data Cleaning
 • Data Exploration
