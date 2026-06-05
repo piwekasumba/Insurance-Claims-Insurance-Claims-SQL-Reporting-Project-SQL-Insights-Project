@@ -1,4 +1,8 @@
--- Create customers table
+-- =========================
+-- CREATE CORE TABLES
+-- =========================
+
+-- Create customers table (raw dataset structure)
 CREATE TABLE customers (
     customer_id SERIAL PRIMARY KEY,
     age INT,
@@ -9,7 +13,7 @@ CREATE TABLE customers (
     region VARCHAR(50)
 );
 
--- Create claims table
+-- Create claims table (raw claims data)
 CREATE TABLE claims (
     claim_id SERIAL PRIMARY KEY,
     customer_id INT,
@@ -18,38 +22,44 @@ CREATE TABLE claims (
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
--- Import customer data
+-- =========================
+-- DATA LOADING
+-- =========================
+
+-- Load customer data from CSV
 COPY customers(age, sex, bmi, children, smoker, region)
 FROM '/path/customers.csv'
 DELIMITER ','
 CSV HEADER;
 
--- Import claims data
+-- Load claims data from CSV
 COPY claims(customer_id, claim_amount, claim_date)
 FROM '/path/claims.csv'
 DELIMITER ','
 CSV HEADER;
 
+-- =========================
+-- BASIC ANALYSIS QUERIES
+-- =========================
+
 -- Total claim amount by region
 SELECT
-    region,
-    SUM(claim_amount) AS total_claim_amount
-FROM customers
-JOIN claims
-ON customers.customer_id = claims.customer_id
-GROUP BY region
+    c.region,
+    SUM(cl.claim_amount) AS total_claim_amount
+FROM customers c
+JOIN claims cl ON c.customer_id = cl.customer_id
+GROUP BY c.region
 ORDER BY total_claim_amount DESC;
 
 -- Average claim amount by smoker status
 SELECT
-    smoker,
-    ROUND(AVG(claim_amount), 2) AS average_claim_amount
-FROM customers
-JOIN claims
-ON customers.customer_id = claims.customer_id
-GROUP BY smoker;
+    c.smoker,
+    ROUND(AVG(cl.claim_amount), 2) AS average_claim_amount
+FROM customers c
+JOIN claims cl ON c.customer_id = cl.customer_id
+GROUP BY c.smoker;
 
--- Top 10 highest individual claims
+-- Top 10 highest claims per customer
 SELECT
     customer_id,
     MAX(claim_amount) AS highest_claim
@@ -58,19 +68,16 @@ GROUP BY customer_id
 ORDER BY highest_claim DESC
 LIMIT 10;
 
--- Number of claims by age group
+-- Claims by age group
 SELECT
     CASE
         WHEN age < 30 THEN 'Under 30'
         WHEN age BETWEEN 30 AND 50 THEN '30-50'
         ELSE 'Over 50'
     END AS age_group,
-    COUNT(claim_id) AS total_claims
-FROM customers
-JOIN claims
-ON customers.customer_id = claims.customer_id
+    COUNT(cl.claim_id) AS total_claims
+FROM customers c
+JOIN claims cl ON c.customer_id = cl.customer_id
 GROUP BY age_group
 ORDER BY total_claims DESC;
-
----
 
