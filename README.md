@@ -67,3 +67,16 @@ In a production environment, this system could be extended into:
 - Data aggregation and grouping
 - Data cleaning and transformation logic
 - Analytical thinking for reporting systems
+
+  ---
+
+## Reporting Team Relevance
+
+This project demonstrates the type of SQL-based analysis and reporting logic commonly used by junior analysts when:
+
+- Preparing data for business reports
+- Validating reporting outputs
+- Supporting KPI monitoring
+- Investigating performance trends
+- Contributing to operational reporting processes
+
