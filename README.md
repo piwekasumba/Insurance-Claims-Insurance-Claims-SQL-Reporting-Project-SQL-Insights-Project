@@ -1,82 +1,81 @@
-# Insurance Claims Risk Analytics (SQL Insights Project)
-
+### Insurance Claims Risk Analytics SQL Insights Project
+---
 ## Business Problem
 
-Insurance companies process large volumes of claims daily. Without structured analysis, it becomes difficult to identify high-risk categories, understand cost distribution, and detect patterns that influence financial exposure and reporting accuracy.
+- Insurance companies depend on accurate claims analysis to identify risk patterns, manage costs, and improve decision-making.
 
-This project demonstrates how SQL can be used to transform raw insurance claims data into structured reporting insights that support risk visibility and decision-making.
-
----
-
-## Reporting Objective
-
-To analyse insurance claims data using SQL in order to:
-
-- Identify high-risk claim categories
-- Measure claim frequency and cost distribution
-- Detect patterns in claims across customers and policies
-- Support structured risk reporting logic
+This project analyzes insurance claims data using SQL to uncover trends and support risk-focused reporting.
 
 ---
-
-## SQL Process
-
-This project uses PostgreSQL-based SQL queries to:
-
-- Clean and structure raw claims data
-- Join claims, customer, and policy datasets
-- Aggregate claims by category and risk segments
-- Calculate total claim values and frequency patterns
-- Extract insights using grouping and filtering logic
-
+## Objective
+Analyze insurance claims data
+Identify risk-related patterns
+Build reporting KPIs
+Support data-driven business decisions
 ---
+## Dataset Overview
 
-## Decision Insight
+- Source: Simulated insurance claims dataset
+- Environment: PostgreSQL
 
-Different levels of data aggregation (claim-level, customer-level, policy-level) produce different interpretations of risk exposure.
+Key Tables:
 
-This highlights how reporting structure directly affects how business risk is interpreted in insurance environments.
-
+- Claims
+- Customers
+- Policies
 ---
+## Tools Used
 
-## Business Impact
-
-This type of analysis supports:
-
-- Better identification of high-risk claim categories
-- Improved reporting consistency
-- More accurate risk visibility for decision-makers
-- Structured reporting outputs for operational review
-
+- PostgreSQL
+- SQL
+- Data Analysis
+- KPI Development
+- Risk Analytics
 ---
+## Key KPIs
 
-## What I Would Improve in a Real Company
-
-In a production environment, this system could be extended into:
-
-- Automated reporting pipelines
-- Scheduled risk dashboards
-- Real-time claim monitoring systems
-- Integration with BI reporting layers
-
+- Claim Approval Rate
+- Average Claim Amount
+- Claim Frequency
+- High-Risk Policy Ratio
+- Customer Claim Activity
 ---
+## Key Insights
 
-## Skills Demonstrated
+- Certain customer segments generate higher claim activity.
+- Claim patterns can highlight potential risk concentrations.
+- KPI monitoring improves visibility into claims performance.
+---
+## Business Recommendations
 
-- SQL (PostgreSQL)
-- Data aggregation and grouping
-- Data cleaning and transformation logic
-- Analytical thinking for reporting systems
+- Review high-risk claim segments regularly.
+- Strengthen risk monitoring through KPI tracking.
+- Use claims trends to support policy management decisions.
+---
+## Project Structure
 
-  ---
+- Data Preparation
+- Analytical SQL Queries
+- KPI Calculations
+- Reporting Outputs
+- Risk Analysis Logic
+--
+## What This Demonstrates
 
-## Reporting Team Relevance
+- SQL analytics skills
+- Risk-focused analysis
+- KPI development
+- Business reporting mindset
+- Entry-level analyst readiness
+---
+## Next Improvements
 
-This project demonstrates the type of SQL-based analysis and reporting logic commonly used by junior analysts when:
+- Expand claims analysis using additional risk scenarios
+- Develop more detailed claim segmentation reporting
+- Add deeper KPI monitoring for claims performance
+- Explore advanced SQL approaches for risk-focused analysis
+---
+## Author
 
-- Preparing data for business reports
-- Validating reporting outputs
-- Supporting KPI monitoring
-- Investigating performance trends
-- Contributing to operational reporting processes
+- ### Piwe Kasumba
 
