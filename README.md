@@ -4,7 +4,7 @@
 
 - Insurance companies depend on accurate claims analysis to identify risk patterns, manage costs, and improve decision-making.
 
-This project analyzes insurance claims data using SQL to uncover trends and support risk-focused reporting.
+- This project analyzes insurance claims data using SQL to uncover trends and support risk-focused reporting.
 
 ---
 ## Objective
