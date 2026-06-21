@@ -75,6 +75,27 @@ Key Tables:
 - Add deeper KPI monitoring for claims performance
 - Explore advanced SQL approaches for risk-focused analysis
 ---
+## Business Impact
+
+This project demonstrates how SQL can be used to support insurance decision-making by identifying risk patterns and transforming raw claims data into actionable insights.
+
+Potential business outcomes include:
+
+- Improved fraud and risk detection
+- Better understanding of claim frequency and severity
+- More accurate reporting for underwriting decisions
+- Faster identification of high-risk policy categories
+---
+## What I Learned
+
+Through this project I strengthened my understanding of:
+
+- SQL querying and data aggregation
+- Risk-focused data analysis
+- Working with structured insurance datasets
+- Translating data into business insights
+- Building analytical thinking for decision-making support
+---
 ## Author
 
 - ### Piwe Kasumba
