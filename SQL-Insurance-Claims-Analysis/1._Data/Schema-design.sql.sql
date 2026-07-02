@@ -61,13 +61,17 @@ CREATE TABLE claims (
 );
 
 -- ==============================
--- INDEXES (PERFORMANCE OPTIMIZATION)
+-- INDEXES TO IMPROVE QUERY PERFORMANCE
 -- ==============================
 
--- Improve claim search performance by policy number
+-- Helps speed up searches using policy numbers
 CREATE INDEX idx_claims_policy
 ON claims(policy_number);
 
--- Improve customer search by last name
+-- Helps find customers by last name more quickly
 CREATE INDEX idx_customers_lastname
 ON customers(last_name);
+
+-- Improve reporting queries by claim date
+CREATE INDEX idx_claims_claim_date
+ON claims(claim_date);
