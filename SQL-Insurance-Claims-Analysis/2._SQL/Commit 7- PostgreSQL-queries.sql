@@ -1,18 +1,24 @@
--- =========================
--- HIGH VALUE CUSTOMERS (CURRENT YEAR ACTIVITY)
--- =========================
+-- ==========================================
+-- HIGH CLAIM ACTIVITY CUSTOMERS (CURRENT YEAR)
+-- ==========================================
 
 SELECT
     cs.customer_id,
     cs.full_name,
-    COUNT(cl.claim_id) AS num_claims,
-    SUM(cl.claim_amount) AS total_claim_amount
-FROM customer_summary cs
-JOIN claims_clean cl ON cs.customer_id = cl.customer_id
+    COUNT(cl.claim_id) AS total_claims,
+    SUM(cl.claim_amount) AS total_claim_amount,
+    ROUND(AVG(cl.claim_amount), 2) AS avg_claim_amount
+FROM customer_summary AS cs
+JOIN claims_clean AS cl
+    ON cs.customer_id = cl.customer_id
 WHERE cl.claim_year = EXTRACT(YEAR FROM CURRENT_DATE)
-GROUP BY cs.customer_id, cs.full_name
+GROUP BY
+    cs.customer_id,
+    cs.full_name
 HAVING COUNT(cl.claim_id) > 5
-ORDER BY total_claim_amount DESC;
+ORDER BY
+    total_claim_amount DESC,
+    total_claims DESC;
 
 -- =========================
 -- STATISTICAL OUTLIER CLAIMS (2 STD DEV RULE)
