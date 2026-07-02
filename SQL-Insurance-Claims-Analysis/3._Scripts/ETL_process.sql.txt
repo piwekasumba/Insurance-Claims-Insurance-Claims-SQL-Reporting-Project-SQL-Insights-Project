@@ -1,26 +1,16 @@
-Commit – Basic ETL and Data Transformation Using SQL
+## Basic ETL and Data Transformation Using SQL
 
-This stage focuses on applying basic ETL (Extract, Transform, Load) concepts using SQL within the insurance claims dataset.
+This stage demonstrates a basic SQL ETL workflow using the insurance claims dataset to prepare raw data for reporting and analysis.
 
-The goal is to understand how data is prepared for analysis through structured steps that simulate a real-world data workflow.
+The workflow includes:
 
-At this stage, the following was done:
+- Created a raw data table (`claims_raw`) to represent incoming source data
+- Cleaned data by removing missing and invalid records
+- Standardized text values for consistent reporting (for example, `policy_type`)
+- Created derived fields including:
+- Claim year for time-based reporting
+- Claim risk level for business classification
+- Loaded transformed data into a cleaned dataset (`claims_clean`)
+- Built a reporting table (`claims_summary`) using aggregated business metrics
 
-- Created a raw dataset table to represent incoming data (claims_raw)
-- Performed basic data cleaning such as removing missing or invalid records
-- Standardized text fields for consistency (e.g., policy_type formatting)
-- Created derived fields such as:
-  - Claim year (for time-based analysis)
-  - Claim risk level (for business classification)
-
-- Built a cleaned dataset (claims_clean) for analysis purposes
-- Aggregated data into a reporting table (claims_summary)
-
-Key focus during this stage:
-
-- Understanding how raw data becomes analysis-ready
-- Learning how transformations affect analytical outputs
-- Practicing structured SQL workflows (ETL thinking)
-- Building simple reporting tables for business insights
-
-This stage strengthens foundational SQL and data preparation skills commonly used in junior data analyst roles.
+This workflow follows a structured Extract, Transform, Load (ETL) process that prepares data for reliable reporting, trend analysis, and business decision-making using SQL.
