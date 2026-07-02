@@ -1,8 +1,8 @@
 -- =========================
--- CLEAN ANALYTICS TABLE
+-- ETL: Build Claims Reporting Table
 -- =========================
 
-CREATE TABLE claims_clean AS
+CREATE TABLE claims_reporting AS
 SELECT
     claim_id,
     customer_id,
@@ -21,7 +21,7 @@ SELECT
 FROM claims;
 
 -- =========================
--- CUSTOMER SUMMARY TABLE
+-- Reporting Summary by Customer
 -- =========================
 
 CREATE TABLE customer_summary AS
@@ -38,7 +38,7 @@ LEFT JOIN claims_clean cl ON c.customer_id = cl.customer_id
 GROUP BY c.customer_id, c.sex;
 
 -- =========================
--- POLICY SUMMARY TABLE
+-- customer_claim_summary
 -- =========================
 
 CREATE TABLE policy_summary AS
