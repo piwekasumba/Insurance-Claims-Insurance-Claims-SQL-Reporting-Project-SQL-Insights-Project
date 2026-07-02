@@ -1,4 +1,4 @@
-## SQL Insurance Claims Analysis Project
+ SQL Insurance Claims Analysis Project
 
 -- Project Overview
 
