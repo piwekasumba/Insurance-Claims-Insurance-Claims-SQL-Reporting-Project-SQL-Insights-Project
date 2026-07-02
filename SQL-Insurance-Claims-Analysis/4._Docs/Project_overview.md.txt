@@ -1,68 +1,62 @@
-• SQL Insurance Claims Analysis Project
+## SQL Insurance Claims Analysis Project
 
-- Project Overview
+-- Project Overview
 
-This project focuses on analyzing insurance claims data using SQL to simulate real-world data analysis workflows. The objective is to explore customer behavior, claim patterns, and risk indicators through structured relational database design and querying.
+This project analyzes insurance claims data using PostgreSQL to explore customer behaviour, claim activity, and business risk. The aim was to practice the complete SQL analysis process, from preparing and cleaning the data to producing insights that could support reporting and business decisions.
 
-The project demonstrates how raw data can be transformed into meaningful insights using SQL techniques commonly used in entry-level data analyst roles.
+The project simulates work commonly performed by a Junior Data Analyst, using SQL to transform raw data into clear and meaningful information.
 
----
+-- Objectives
 
-- Objectives
+- Build a relational database for insurance claims data
+- Clean and prepare data for analysis
+- Write SQL queries to answer business questions
+- Analyse customer and claim trends
+- Produce reporting-ready outputs using SQL
 
-- Understand insurance claims and customer data relationships
-- Practice SQL-based data cleaning and transformation
-- Build relational queries using multiple tables
-- Generate business insights through aggregations and analysis
-- Simulate a basic ETL workflow using SQL
+-- Dataset
 
----
+The project uses two related tables:
 
-- Dataset Description
+- Customers – customer demographic and lifestyle information
+- Claims – insurance claim records linked to each customer
 
-The project uses two main datasets:
+The tables are connected using customer_id, allowing customer and claim data to be analysed together.
 
-- **Customers Table**: Contains customer demographic and lifestyle information
-- **Claims Table**: Contains insurance claim records linked to customers
+-- SQL Work Completed
 
-These datasets are connected using relational keys (customer_id), allowing for multi-table analysis.
+- Created relational database tables
+- Cleaned and standardised the data
+- Established relationships using primary and foreign keys
+- Joined multiple tables for analysis
+- Used aggregate functions and GROUP BY to summarise data
+- Created calculated fields for reporting
+- Built summary queries to support business reporting
 
----
+-- Business Questions Explored
 
-- Key SQL Work Completed
+• Which customer groups submit the most claims?
+• Which claim severity levels account for the highest claim amounts?
+• How do claims change over time by year and month?
+• Which customers and policies generate the highest claim values?
+• What trends could help support business reporting and risk monitoring?
 
-- Creation of relational database tables
-- Data cleaning and standardization
-- Use of foreign keys to establish relationships
-- Implementation of JOIN operations between tables
-- Aggregation of data using GROUP BY
-- Creation of derived fields for analytical purposes
-- Development of summary tables for reporting
+-- Skills Demonstrated
 
----
+• PostgreSQL
+• SQL querying
+• Data cleaning
+• Data transformation
+• Table joins
+• Aggregations
+• Relational database design
+• Business analysis
+• Reporting using SQL
 
-- Analytical Focus Areas
+-- Key Learnings
 
-- Total claim amounts by customer segments
-- Claim frequency and severity analysis
-- Risk-based classification of claims
-- Time-based analysis of claims (year and month trends)
-- Identification of high-value customers and policies
+Through this project, I strengthened my understanding of relational databases, SQL querying, and business-focused analysis. I gained practical experience preparing data, analysing multiple related tables, and producing reporting-ready results that answer real business questions.
 
----
+-- Conclusion
 
-- Key Learnings
-
-- Understanding relational database design principles
-- Applying SQL for real-world data analysis tasks
-- Working with structured datasets and multi-table relationships
-- Building analytical thinking through business-oriented queries
-- Developing foundational ETL-style workflows using SQL
-
----
-
-- Conclusion
-
-This project represents a complete SQL-based data analysis workflow, starting from raw data structure to final analytical outputs.
-
-It demonstrates practical skills in SQL, data modeling, and business-oriented analysis, which are essential for junior data analyst and reporting roles.
+This project demonstrates an end-to-end SQL analysis workflow, from preparing raw data to generating business insights. It reflects the practical SQL, reporting, and analytical skills I am developing as I prepare for entry-level Data Analyst and Reporting Analyst opportunities in South Africa.
