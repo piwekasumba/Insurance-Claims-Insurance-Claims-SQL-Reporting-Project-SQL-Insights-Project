@@ -1,4 +1,4 @@
-# Insurance Claims Analysis with SQL
+Insurance Claims Analysis with SQL
     
 -- Project Overview
 
