@@ -1,4 +1,4 @@
-##Basic ETL and Data Transformation Using SQL
+## Basic ETL and Data Transformation Using SQL ##
 
 This stage demonstrates a basic SQL ETL workflow using the insurance claims dataset to prepare raw data for reporting and analysis.
 
