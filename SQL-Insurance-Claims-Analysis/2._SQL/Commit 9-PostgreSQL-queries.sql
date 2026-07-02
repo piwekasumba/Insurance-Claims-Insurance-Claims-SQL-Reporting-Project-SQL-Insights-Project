@@ -15,28 +15,29 @@ TO 'data/policy_summary.csv'
 WITH CSV HEADER;
 
 -- =========================
--- EXPORT FRAUD FLAGGED CUSTOMERS
+-- EXPORT FRAUD REVIEW LIST
 -- =========================
 
-WITH high_frequency AS (
-    SELECT customer_id
-    FROM claims_clean
-    GROUP BY customer_id
-    HAVING COUNT(*) > 5
-),
-high_value AS (
-    SELECT customer_id
-    FROM claims_clean
-    WHERE claim_amount > (
-        SELECT AVG(claim_amount) + 2 * STDDEV(claim_amount)
+COPY (WITH high_frequency AS (
+        SELECT customer_id
         FROM claims_clean
+        GROUP BY customer_id
+        HAVING COUNT(*) > 5
+    ),
+    high_value AS (SELECT customer_id
+        FROM claims_clean
+        WHERE claim_amount > (SELECT AVG(claim_amount) + (2 * STDDEV(claim_amount))
+            FROM claims_clean)
     )
+
+    SELECT DISTINCT
+        c.customer_id,
+        c.full_name
+    FROM customers c
+    INNER JOIN high_frequency hf
+        ON c.customer_id = hf.customer_id
+    INNER JOIN high_value hv
+        ON c.customer_id = hv.customer_id
 )
-
-SELECT DISTINCT
-    c.customer_id,
-    c.full_name
-FROM customers c
-JOIN high_frequency hf ON c.customer_id = hf.customer_id
-JOIN high_value hv ON c.customer_id = hv.customer_id;
-
+TO 'data/fraud_review_customers.csv'
+WITH CSV HEADER;
