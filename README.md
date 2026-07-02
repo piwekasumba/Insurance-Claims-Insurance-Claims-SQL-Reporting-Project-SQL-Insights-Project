@@ -1,102 +1,158 @@
-### Insurance Claims Risk Analytics SQL Insights Project
+# Insurance Claims Risk Analytics SQL Project
+
+## Project Overview
+
+Insurance companies rely on accurate claims data to monitor risk, understand claim trends, and support better business decisions.
+
+In this project, I used PostgreSQL to analyze a simulated insurance claims dataset and answer business questions using SQL. The analysis focuses on claim activity, claim severity, customer behaviour, and reporting metrics that could support risk monitoring and operational decision-making.
+
+The goal of this project was not only to write SQL queries, but to demonstrate how data can be transformed into useful business information.
+
 ---
-## Business Problem
 
-- Insurance companies depend on accurate claims analysis to identify risk patterns, manage costs, and improve decision-making.
+# Business Problem
 
-- This project analyzes insurance claims data using SQL to uncover trends and support risk-focused reporting.
+Insurance providers process large volumes of claims every day. Without structured reporting, it becomes difficult to identify high-risk claim patterns, monitor performance, and make informed decisions.
+
+This project explores how SQL can be used to organise claims data into meaningful reporting that supports business operations.
 
 ---
-## Objective
-Analyze insurance claims data
-Identify risk-related patterns
-Build reporting KPIs
-Support data-driven business decisions
+
+# Project Objectives
+
+- Analyse insurance claims using SQL
+- Identify claim trends and risk patterns
+- Calculate business reporting KPIs
+- Produce reporting-ready query outputs
+- Support data-driven decision-making
+
 ---
-## Dataset Overview
 
-- Source: Simulated insurance claims dataset
-- Environment: PostgreSQL
+# Dataset
 
-Key Tables:
+**Dataset Type**
 
-- Claims
+Simulated Insurance Claims Dataset
+
+**Database**
+
+PostgreSQL
+
+### Main Tables
+
 - Customers
 - Policies
+- Claims
+
 ---
-## Tools Used
+
+# Skills Demonstrated
 
 - PostgreSQL
 - SQL
-- Data Analysis
+- Data Cleaning
+- Data Aggregation
+- Joins
+- Common Table Expressions (CTEs)
+- Business Reporting
 - KPI Development
 - Risk Analytics
----
-## Key KPIs
 
+---
+
+# Business Questions Answered
+
+This project explores questions such as:
+
+- Which claim types occur most frequently?
+- Which claim severity levels generate the highest costs?
+- Which customers submit the most claims?
+- How does claim activity change over time?
+- Which KPIs can help monitor claims performance?
+
+---
+
+# Key KPIs
+
+- Total Claims
 - Claim Approval Rate
 - Average Claim Amount
+- Total Claim Value
 - Claim Frequency
-- High-Risk Policy Ratio
+- High-Risk Claim Ratio
 - Customer Claim Activity
+
 ---
-## Key Insights
 
-- Certain customer segments generate higher claim activity.
-- Claim patterns can highlight potential risk concentrations.
-- KPI monitoring improves visibility into claims performance.
+# Key Findings
+
+The analysis showed that:
+
+- Some customer groups submit claims more frequently than others.
+- Claim severity has a significant impact on total claim costs.
+- Regular KPI reporting improves visibility into claims performance.
+- SQL aggregation makes it easier to identify business trends from large datasets.
+
 ---
-## Business Recommendations
 
-- Review high-risk claim segments regularly.
-- Strengthen risk monitoring through KPI tracking.
-- Use claims trends to support policy management decisions.
+# Business Recommendations
+
+Based on the analysis:
+
+- Monitor high-risk claims through regular KPI reporting.
+- Review customer segments with higher claim frequency.
+- Track claim trends over time to support operational planning.
+- Use reporting dashboards to improve business visibility.
+
 ---
-## Project Structure
 
-- Data Preparation
-- Analytical SQL Queries
-- KPI Calculations
-- Reporting Outputs
-- Risk Analysis Logic
---
-## What This Demonstrates
+# Project Structure
 
-- SQL analytics skills
-- Risk-focused analysis
-- KPI development
-- Business reporting mindset
-- Entry-level analyst readiness
+```
+Insurance-Claims-Risk-Analytics/
+
+-  Database Schema
+-  Sample Data
+-  Data Cleaning
+-  Analytical SQL Queries
+-  KPI Queries
+-  Business Insights
+-  README.md
+```
+
 ---
-## Next Improvements
 
-- Expand claims analysis using additional risk scenarios
-- Develop more detailed claim segmentation reporting
-- Add deeper KPI monitoring for claims performance
-- Explore advanced SQL approaches for risk-focused analysis
+# Business Impact
+
+This project demonstrates how SQL can be used to transform raw insurance claims data into reporting that supports business decisions.
+
+The analysis provides information that could help improve reporting, monitor claim performance, identify risk trends, and support operational decision-making.
+
 ---
-## Business Impact
 
-This project demonstrates how SQL can be used to support insurance decision-making by identifying risk patterns and transforming raw claims data into actionable insights.
+# What I Learned
 
-Potential business outcomes include:
+Through this project I improved my ability to:
 
-- Improved fraud and risk detection
-- Better understanding of claim frequency and severity
-- More accurate reporting for underwriting decisions
-- Faster identification of high-risk policy categories
+- Write structured SQL queries
+- Analyse business data
+- Build reporting KPIs
+- Work with relational databases
+- Translate business questions into SQL analysis
+- Present findings in a clear and structured way
+
 ---
-## What I Learned
 
-Through this project I strengthened my understanding of:
+# About This Project
 
-- SQL querying and data aggregation
-- Risk-focused data analysis
-- Working with structured insurance datasets
-- Translating data into business insights
-- Building analytical thinking for decision-making support
+This project was completed as part of my practical SQL portfolio while preparing for entry-level Data Analyst and Reporting Analyst opportunities in South Africa. It reflects my approach to solving business problems using SQL and developing practical analytical skills through hands-on projects.
+
 ---
-## Author
 
-- ### Piwe Kasumba
+# Author
 
+**Piwe Kasumba**
+
+Junior Data Analyst (SQL Focus)
+
+South Africa
