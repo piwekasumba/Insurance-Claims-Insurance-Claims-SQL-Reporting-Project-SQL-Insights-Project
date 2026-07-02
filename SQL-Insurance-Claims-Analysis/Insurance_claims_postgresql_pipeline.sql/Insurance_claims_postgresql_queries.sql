@@ -1,70 +1,28 @@
--- =====================================
--- DATA CLEANING (RAW DATA FIXES)
--- =====================================
+# Insurance Claims Analysis with SQL
+    
+-- Project Overview
 
--- Standardize gender values
-UPDATE customers
-SET sex = LOWER(sex);
+This project demonstrates how SQL can be used to clean insurance data and analyze claims to answer practical business questions.
 
--- Fix negative claim amounts
-UPDATE claims
-SET claim_amount = ABS(claim_amount)
-WHERE claim_amount < 0;
+The project begins with data cleaning by standardizing inconsistent values and correcting invalid claim amounts before performing analysis. Once the data is prepared, SQL queries are used to identify claim trends, compare customer groups, and summarize results that could support reporting and business decision-making.
 
--- =====================================
--- CLAIMS BY REGION ANALYSIS
--- =====================================
+-- Business Questions Answered
 
-SELECT 
-    c.region,
-    COUNT(cl.claim_id) AS total_claims,
-    SUM(cl.claim_amount) AS total_claim_amount
-FROM customers c
-JOIN claims cl
-ON c.customer_id = cl.customer_id
-GROUP BY c.region
-ORDER BY total_claim_amount DESC;
+- Which regions have the highest total claim amounts?
+- Do smokers submit higher-value claims than non-smokers?
+- Which customers have the highest individual claim values?
+- How are insurance claims distributed across different age groups?
 
--- =====================================
--- CLAIM RISK BY SMOKER STATUS
--- =====================================
+-- SQL Skills Demonstrated
 
-SELECT 
-    c.smoker,
-    COUNT(cl.claim_id) AS total_claims,
-    ROUND(AVG(cl.claim_amount), 2) AS avg_claim_amount
-FROM customers c
-JOIN claims cl
-ON c.customer_id = cl.customer_id
-GROUP BY c.smoker
-ORDER BY avg_claim_amount DESC;
+- Data cleaning and transformation
+- UPDATE statements
+- INNER JOINs
+- Aggregate functions (COUNT, SUM, AVG, MAX)
+- CASE expressions
+- GROUP BY and ORDER BY
+- Business-focused reporting using PostgreSQL
 
--- =====================================
--- TOP CUSTOMERS BY CLAIM VALUE
--- =====================================
+-- Business Value
 
-SELECT 
-    customer_id,
-    MAX(claim_amount) AS highest_claim
-FROM claims
-GROUP BY customer_id
-ORDER BY highest_claim DESC
-LIMIT 10;
-
--- =====================================
--- AGE GROUP CLAIM DISTRIBUTION
--- =====================================
-
-SELECT
-    CASE
-        WHEN c.age < 30 THEN 'Under 30'
-        WHEN c.age BETWEEN 30 AND 50 THEN '30-50'
-        ELSE 'Over 50'
-    END AS age_group,
-    COUNT(cl.claim_id) AS total_claims
-FROM customers c
-JOIN claims cl
-ON c.customer_id = cl.customer_id
-GROUP BY age_group
-ORDER BY total_claims DESC;
-
+This analysis shows how SQL can be used to prepare reliable data and generate insights that support reporting, risk analysis, and business decisions within an insurance environment.
