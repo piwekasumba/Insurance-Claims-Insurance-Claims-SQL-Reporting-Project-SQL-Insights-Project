@@ -19,14 +19,17 @@ FROM claims_clean
 GROUP BY claim_year, claim_month
 ORDER BY claim_year, claim_month;
 
--- Claims by severity type
+-- Claim approval performance by severity
 SELECT
     claim_severity,
-    COUNT(*) AS num_claims,
+    COUNT(*) AS total_claims,
+    SUM(CASE WHEN claim_status = 'Approved' THEN 1 ELSE 0 END) AS approved_claims,
+    ROUND(100.0 * SUM(CASE WHEN claim_status = 'Approved' THEN 1 ELSE 0 END) / COUNT(*),
+        2) AS approval_rate_percent,
     AVG(claim_amount) AS avg_claim_amount
 FROM claims_clean
 GROUP BY claim_severity
-ORDER BY avg_claim_amount DESC;
+ORDER BY approval_rate_percent DESC;
 
 -- Top high-value customers
 SELECT
