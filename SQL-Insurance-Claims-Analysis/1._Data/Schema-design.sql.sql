@@ -1,6 +1,13 @@
--- ==============================
--- CUSTOMERS TABLE
--- ==============================
+-- ===========================================================
+-- INSURANCE CLAIMS RISK ANALYTICS DATABASE
+-- PostgreSQL Relational Schema
+-- ===========================================================
+
+-- ===========================================================
+-- CUSTOMERS
+-- Stores customer information used for reporting and analysis.
+-- ===========================================================
+
 CREATE TABLE customers (
     customer_id SERIAL PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -14,24 +21,28 @@ CREATE TABLE customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ==============================
--- CLAIM STATUS LOOKUP TABLE
--- ==============================
+-- ===========================================================
+-- CLAIM STATUS LOOKUP
+-- Standardises claim statuses for consistent reporting.
+-- ===========================================================
+
 CREATE TABLE claim_status_lookup (
     status_id SERIAL PRIMARY KEY,
     status_name VARCHAR(20) UNIQUE NOT NULL
 );
 
--- Insert default claim statuses
-INSERT INTO claim_status_lookup (status_name) VALUES
+INSERT INTO claim_status_lookup (status_name)
+VALUES
 ('Pending'),
 ('Approved'),
 ('Rejected'),
 ('Under Review');
 
--- ==============================
--- CLAIMS TABLE
--- ==============================
+-- ===========================================================
+-- CLAIMS
+-- Stores insurance claim transactions linked to customers.
+-- ===========================================================
+
 CREATE TABLE claims (
     claim_id SERIAL PRIMARY KEY,
 
@@ -47,9 +58,9 @@ CREATE TABLE claims (
     claim_amount NUMERIC(12,2) NOT NULL
         CHECK (claim_amount > 0),
 
-    status_id INT
-        REFERENCES claim_status_lookup(status_id)
-        DEFAULT 1,
+    status_id INT NOT NULL
+        DEFAULT 1
+        REFERENCES claim_status_lookup(status_id),
 
     claim_type VARCHAR(50),
 
@@ -60,18 +71,27 @@ CREATE TABLE claims (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ==============================
--- INDEXES TO IMPROVE QUERY PERFORMANCE
--- ==============================
+-- ===========================================================
+-- INDEXES
+-- Improve query performance for reporting workloads.
+-- ===========================================================
 
--- Helps speed up searches using policy numbers
-CREATE INDEX idx_claims_policy
+-- Frequently used when analysing policies
+CREATE INDEX idx_claims_policy_number
 ON claims(policy_number);
 
--- Helps find customers by last name more quickly
-CREATE INDEX idx_customers_lastname
-ON customers(last_name);
+-- Frequently used when joining customers and claims
+CREATE INDEX idx_claims_customer
+ON claims(customer_id);
 
--- Improve reporting queries by claim date
+-- Frequently used for monthly and yearly reporting
 CREATE INDEX idx_claims_claim_date
 ON claims(claim_date);
+
+-- Frequently used when reporting by claim status
+CREATE INDEX idx_claims_status
+ON claims(status_id);
+
+-- Supports customer searches
+CREATE INDEX idx_customers_last_name
+ON customers(last_name);
