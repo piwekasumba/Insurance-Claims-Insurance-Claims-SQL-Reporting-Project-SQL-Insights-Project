@@ -1,16 +1,38 @@
-Basic ETL and Data Transformation Using SQL 
+# ETL and Data Preparation
 
-This stage demonstrates a basic SQL ETL workflow using the insurance claims dataset to prepare raw data for reporting and analysis.
+This project includes a simplified SQL ETL (Extract, Transform, Load) workflow that prepares insurance claims data for reporting and business analysis using PostgreSQL.
 
-The workflow includes:
+## ETL Process
 
-- Created a raw data table (`claims_raw`) to represent incoming source data
-- Cleaned data by removing missing and invalid records
-- Standardized text values for consistent reporting (for example, `policy_type`)
-- Created derived fields including:
-- Claim year for time-based reporting
-- Claim risk level for business classification
-- Loaded transformed data into a cleaned dataset (`claims_clean`)
-- Built a reporting table (`claims_summary`) using aggregated business metrics
+### Extract
 
-This workflow follows a structured Extract, Transform, Load (ETL) process that prepares data for reliable reporting, trend analysis, and business decision-making using SQL.
+- Loaded raw insurance claims data into PostgreSQL tables.
+- Organised customer and claims data within a relational database structure.
+
+### Transform
+
+- Removed invalid and incomplete records.
+- Standardised data values for consistent reporting.
+- Created derived reporting fields, including:
+  - Claim Year
+  - Claim Month
+  - Claim Severity
+- Prepared clean, reporting-ready datasets using SQL transformations.
+
+### Load
+
+- Loaded the transformed data into reporting tables.
+- Created customer and policy summary tables to support business reporting and KPI analysis.
+
+## Reporting Value
+
+The ETL process improves data quality and prepares structured datasets for:
+
+- Claims reporting
+- Customer claims analysis
+- Policy performance reporting
+- Monthly trend analysis
+- KPI reporting
+- Operational decision support
+
+This demonstrates how SQL can be used to transform raw business data into reliable, reporting-ready information that supports business decision-making.
