@@ -1,83 +1,141 @@
--- ==========================================
--- HIGH CLAIM ACTIVITY CUSTOMERS (CURRENT YEAR)
--- ==========================================
+-- ==========================================================
+-- REPORT: HIGH CLAIM ACTIVITY CUSTOMERS
+-- ==========================================================
+-- Business Question:
+-- Which customers submitted the highest number of claims?
+--
+-- Business Purpose:
+-- Supports operational reporting by identifying customers
+-- with high claims activity that may require further review.
+--
+-- Reporting Output:
+-- Ranked customer claims summary.
+-- ==========================================================
 
 SELECT
     cs.customer_id,
     cs.full_name,
     COUNT(cl.claim_id) AS total_claims,
     SUM(cl.claim_amount) AS total_claim_amount,
-    ROUND(AVG(cl.claim_amount), 2) AS avg_claim_amount
+    ROUND(AVG(cl.claim_amount), 2) AS average_claim_amount
 FROM customer_summary AS cs
-JOIN claims_clean AS cl
+INNER JOIN claims_clean AS cl
     ON cs.customer_id = cl.customer_id
-WHERE cl.claim_year = EXTRACT(YEAR FROM CURRENT_DATE)
 GROUP BY
     cs.customer_id,
     cs.full_name
-HAVING COUNT(cl.claim_id) > 5
+HAVING COUNT(cl.claim_id) >= 5
 ORDER BY
     total_claim_amount DESC,
     total_claims DESC;
 
--- =========================
--- STATISTICAL OUTLIER CLAIMS (2 STD DEV RULE)
--- =========================
 
-WITH stats AS (
+-- ==========================================================
+-- REPORT: HIGH-VALUE CLAIM EXCEPTIONS
+-- ==========================================================
+-- Business Question:
+-- Which claims are significantly above the average claim value?
+--
+-- Business Purpose:
+-- Helps claims teams identify unusually large claims that
+-- may require additional business review.
+--
+-- Reporting Output:
+-- Exception report for high-value claims.
+-- ==========================================================
+
+WITH claim_statistics AS (
     SELECT
-        AVG(claim_amount) AS avg_amount,
-        STDDEV(claim_amount) AS std_dev
+        AVG(claim_amount) AS average_claim,
+        STDDEV(claim_amount) AS standard_deviation
     FROM claims_clean
 )
-SELECT
-    cl.claim_id,
-    cl.customer_id,
-    cl.claim_amount,
-    cl.claim_date,
-    cl.policy_number
-FROM claims_clean cl
-CROSS JOIN stats s
-WHERE cl.claim_amount > (s.avg_amount + 2 * s.std_dev)
-ORDER BY cl.claim_amount DESC;
 
--- =========================
--- POLICIES WITH FREQUENT HIGH-SEVERITY CLAIMS
--- =========================
+SELECT
+    c.claim_id,
+    c.customer_id,
+    c.policy_number,
+    c.claim_date,
+    c.claim_amount
+FROM claims_clean AS c
+CROSS JOIN claim_statistics AS s
+WHERE c.claim_amount >
+      (s.average_claim + (2 * s.standard_deviation))
+ORDER BY
+    c.claim_amount DESC;
+
+
+-- ==========================================================
+-- REPORT: HIGH-SEVERITY POLICY MONITORING
+-- ==========================================================
+-- Business Question:
+-- Which policies generated multiple high-severity claims?
+--
+-- Business Purpose:
+-- Supports operational monitoring by identifying policies
+-- with repeated high-cost claims.
+--
+-- Reporting Output:
+-- Policy risk monitoring report.
+-- ==========================================================
 
 SELECT
     policy_number,
     COUNT(*) AS high_severity_claims,
+    SUM(claim_amount) AS total_claim_cost,
     MIN(claim_date) AS first_claim_date,
-    MAX(claim_date) AS last_claim_date
+    MAX(claim_date) AS latest_claim_date
 FROM claims_clean
 WHERE claim_severity = 'High'
-GROUP BY policy_number
+GROUP BY
+    policy_number
 HAVING COUNT(*) >= 3
-   AND (MAX(claim_date) - MIN(claim_date)) <= INTERVAL '90 days'
-ORDER BY high_severity_claims DESC;
+ORDER BY
+    total_claim_cost DESC;
 
--- =========================
--- FRAUD INDICATOR: HIGH FREQUENCY + HIGH VALUE CLAIMS
--- =========================
 
-WITH high_frequency AS (
-    SELECT customer_id
+-- ==========================================================
+-- REPORT: CUSTOMERS REQUIRING BUSINESS REVIEW
+-- ==========================================================
+-- Business Question:
+-- Which customers have both high claim frequency and
+-- unusually high claim values?
+--
+-- Business Purpose:
+-- Produces an exception report to support operational
+-- review and risk monitoring.
+--
+-- Reporting Output:
+-- Customer review report.
+-- ==========================================================
+
+WITH high_frequency_customers AS (
+    SELECT
+        customer_id
     FROM claims_clean
     GROUP BY customer_id
-    HAVING COUNT(*) > 5
+    HAVING COUNT(*) >= 5
 ),
-high_value AS (
-    SELECT customer_id
+
+high_value_customers AS (
+    SELECT
+        customer_id
     FROM claims_clean
-    WHERE claim_amount > (
-        SELECT AVG(claim_amount) + 2 * STDDEV(claim_amount)
+    WHERE claim_amount >
+    (
+        SELECT
+            AVG(claim_amount) + (2 * STDDEV(claim_amount))
         FROM claims_clean
     )
 )
 
-SELECT DISTINCT c.customer_id, c.full_name
-FROM customers c
-JOIN high_frequency hf ON c.customer_id = hf.customer_id
-JOIN high_value hv ON c.customer_id = hv.customer_id;
-
+SELECT DISTINCT
+    c.customer_id,
+    c.full_name
+FROM customers AS c
+INNER JOIN high_frequency_customers AS hf
+    ON c.customer_id = hf.customer_id
+INNER JOIN high_value_customers AS hv
+    ON c.customer_id = hv.customer_id
+ORDER BY
+    c.customer_id;
