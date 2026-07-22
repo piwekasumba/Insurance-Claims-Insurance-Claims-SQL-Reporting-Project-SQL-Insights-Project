@@ -1,4 +1,9 @@
 -- =====================================
+-- INSURANCE CLAIMS ANALYSIS
+-- PostgreSQL
+-- =====================================
+
+-- =====================================
 -- CREATE TABLES
 -- =====================================
 
@@ -49,49 +54,104 @@ DELIMITER ','
 CSV HEADER;
 
 -- =====================================
--- BUSINESS QUESTIONS
+-- BUSINESS QUESTION 1
+-- Which regions generated the highest total
+-- insurance claim costs?
+--
+-- Business Purpose:
+-- Helps identify regions contributing most
+-- to overall claims expenditure.
+--
+-- Reporting Output:
+-- Regional claims summary ranked by total
+-- claim value.
 -- =====================================
 
--- 1. Which regions have the highest total claim amounts?
 SELECT
     c.region,
-    SUM(cl.claim_amount) AS total_claim_amount
+    COUNT(cl.claim_id) AS total_claims,
+    SUM(cl.claim_amount) AS total_claim_amount,
+    ROUND(AVG(cl.claim_amount), 2) AS average_claim_amount
 FROM customers AS c
 INNER JOIN claims AS cl
     ON c.customer_id = cl.customer_id
 GROUP BY c.region
 ORDER BY total_claim_amount DESC;
 
--- 2. Do smokers have higher average claim amounts?
+-- =====================================
+-- BUSINESS QUESTION 2
+-- Do smokers generate higher insurance
+-- claim costs than non-smokers?
+--
+-- Business Purpose:
+-- Supports customer risk reporting by
+-- comparing claims performance across
+-- customer groups.
+--
+-- Reporting Output:
+-- Claims summary by smoker status.
+-- =====================================
+
 SELECT
     c.smoker,
+    COUNT(cl.claim_id) AS total_claims,
+    SUM(cl.claim_amount) AS total_claim_amount,
     ROUND(AVG(cl.claim_amount), 2) AS average_claim_amount
 FROM customers AS c
 INNER JOIN claims AS cl
     ON c.customer_id = cl.customer_id
 GROUP BY c.smoker
-ORDER BY average_claim_amount DESC;
+ORDER BY total_claim_amount DESC;
 
--- 3. Which customers submitted the highest individual claims?
+-- =====================================
+-- BUSINESS QUESTION 3
+-- Which customers generated the highest
+-- total insurance claim costs?
+--
+-- Business Purpose:
+-- Supports reporting by identifying
+-- customers with the highest overall
+-- claims activity.
+--
+-- Reporting Output:
+-- Ranked customer claims report.
+-- =====================================
+
 SELECT
     customer_id,
-    MAX(claim_amount) AS highest_claim
+    COUNT(claim_id) AS total_claims,
+    SUM(claim_amount) AS total_claim_amount,
+    ROUND(AVG(claim_amount), 2) AS average_claim_amount,
+    MAX(claim_amount) AS highest_claim_amount
 FROM claims
 GROUP BY customer_id
-ORDER BY highest_claim DESC
+ORDER BY total_claim_amount DESC
 LIMIT 10;
 
--- 4. Which age groups submit the most insurance claims?
+-- =====================================
+-- BUSINESS QUESTION 4
+-- Which age groups generate the greatest
+-- claims activity?
+--
+-- Business Purpose:
+-- Helps understand claims patterns across
+-- customer age groups for reporting.
+--
+-- Reporting Output:
+-- Age group claims summary.
+-- =====================================
+
 SELECT
     CASE
         WHEN c.age < 30 THEN 'Under 30'
         WHEN c.age BETWEEN 30 AND 50 THEN '30-50'
         ELSE 'Over 50'
     END AS age_group,
-    COUNT(cl.claim_id) AS total_claims
+    COUNT(cl.claim_id) AS total_claims,
+    SUM(cl.claim_amount) AS total_claim_amount,
+    ROUND(AVG(cl.claim_amount), 2) AS average_claim_amount
 FROM customers AS c
 INNER JOIN claims AS cl
     ON c.customer_id = cl.customer_id
 GROUP BY age_group
-ORDER BY total_claims DESC;
-
+ORDER BY total_claim_amount DESC;
