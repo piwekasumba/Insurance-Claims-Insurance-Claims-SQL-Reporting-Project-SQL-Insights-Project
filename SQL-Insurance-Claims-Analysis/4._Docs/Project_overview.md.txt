@@ -1,62 +1,128 @@
- SQL Insurance Claims Analysis Project
+SQL Insurance Claims Analysis Project
+Project Overview
 
--- Project Overview
+This project demonstrates how I used PostgreSQL to analyse a simulated insurance claims dataset from a business reporting perspective.
 
-This project analyzes insurance claims data using PostgreSQL to explore customer behaviour, claim activity, and business risk. The aim was to practice the complete SQL analysis process, from preparing and cleaning the data to producing insights that could support reporting and business decisions.
+The project focuses on organising relational data, writing SQL queries to answer business questions, calculating reporting metrics, and producing reporting-ready outputs that support operational monitoring and decision-making.
 
-The project simulates work commonly performed by a Junior Data Analyst, using SQL to transform raw data into clear and meaningful information.
+It reflects the type of analytical thinking expected from an entry-level Reporting Analyst working with structured business data.
 
--- Objectives
+Business Scenario
 
-- Build a relational database for insurance claims data
-- Clean and prepare data for analysis
-- Write SQL queries to answer business questions
-- Analyse customer and claim trends
-- Produce reporting-ready outputs using SQL
+Insurance companies process large volumes of claims data every day. Without accurate reporting, it becomes difficult to monitor claims activity, identify trends, measure operational performance, and support business decisions.
 
--- Dataset
+This project demonstrates how SQL can transform raw claims data into meaningful information for reporting and business analysis.
 
-The project uses two related tables:
+Project Objectives:
 
-- Customers – customer demographic and lifestyle information
-- Claims – insurance claim records linked to each customer
+Build a relational database using PostgreSQL
+Prepare structured data for analysis
+Write SQL queries to answer business questions
+Analyse claims activity and reporting metrics
+Produce reporting-ready datasets
+Support data-driven business decisions
 
-The tables are connected using customer_id, allowing customer and claim data to be analysed together.
+Dataset
 
--- SQL Work Completed
+Dataset Type
 
-- Created relational database tables
-- Cleaned and standardised the data
-- Established relationships using primary and foreign keys
-- Joined multiple tables for analysis
-- Used aggregate functions and GROUP BY to summarise data
-- Created calculated fields for reporting
-- Built summary queries to support business reporting
+Simulated Insurance Claims Dataset
 
--- Business Questions Explored
+Database
 
-• Which customer groups submit the most claims?
-• Which claim severity levels account for the highest claim amounts?
-• How do claims change over time by year and month?
-• Which customers and policies generate the highest claim values?
-• What trends could help support business reporting and risk monitoring?
+PostgreSQL
 
--- Skills Demonstrated
+Main Tables
 
-• PostgreSQL
-• SQL querying
-• Data cleaning
-• Data transformation
-• Table joins
-• Aggregations
-• Relational database design
-• Business analysis
-• Reporting using SQL
+Customers
+Claims
+Claim Status
 
--- Key Learnings
+SQL Work Completed
+Designed relational database tables
+Applied primary and foreign key relationships
+Queried data using joins and aggregate functions
+Used CASE expressions for business classifications
+Built reporting-focused SQL queries
+Created customer and claims summary reports
+Analysed trends using time-based reporting
+Produced reusable reporting outputs
+Business Questions Explored
+Which customers generated the highest total claim costs?
+Which claim severity levels contribute the most to overall claim values?
+How do claims change over time?
+Which policies require closer monitoring based on claim activity?
+What reporting metrics can support operational decision-making?
 
-Through this project, I strengthened my understanding of relational databases, SQL querying, and business-focused analysis. I gained practical experience preparing data, analysing multiple related tables, and producing reporting-ready results that answer real business questions.
+Skills Demonstrated
 
--- Conclusion
+SQL
+PostgreSQL
+SELECT
+WHERE
+GROUP BY
+ORDER BY
+Aggregate Functions
+INNER JOIN
+LEFT JOIN
+CASE Expressions
+Common Table Expressions (CTEs)
+Reporting
+Business Reporting
+KPI Reporting
+Claims Analysis
+Trend Analysis
+Data Summarisation
+Database
+Relational Database Design
+Primary and Foreign Keys
+Table Relationships
+Query Optimisation
+Professional
+Analytical Thinking
+Problem Solving
+Attention to Detail
+Business Communication
+Reporting Outputs
+Customer claims summaries
+Monthly claims reporting
+Claim severity reporting
+Customer activity analysis
+Policy performance summaries
+Reporting-ready SQL datasets
+Business Insights
 
-This project demonstrates an end-to-end SQL analysis workflow, from preparing raw data to generating business insights. It reflects the practical SQL, reporting, and analytical skills I am developing as I prepare for entry-level Data Analyst and Reporting Analyst opportunities in South Africa.
+The analysis demonstrates how SQL can be used to:
+
+Identify customers with high claim values
+Monitor claim trends over time
+Compare claim severity levels
+Summarise operational performance
+Support business reporting through structured data analysis
+
+Business Recommendations
+
+Based on the analysis:
+
+Monitor high-value claims through regular reporting
+Track claim trends to support operational planning
+Review high-risk policies for further investigation
+Use reusable SQL queries to improve reporting consistency
+Support business decisions with accurate reporting metrics
+
+What I Learned
+
+Through this project I strengthened my ability to:
+
+Work with relational databases
+Write structured SQL queries
+Join and summarise business data
+Analyse insurance claims information
+Produce reporting-focused SQL outputs
+Connect technical SQL work to business reporting requirements
+
+Conclusion
+
+This project demonstrates an end-to-end SQL reporting workflow, from working with relational data to producing reporting-ready outputs that support business analysis.
+
+It forms part of my SQL portfolio as I continue preparing for entry-level Reporting Analyst and Data Analyst opportunities in South Africa, with a focus on SQL reporting, data quality, and business analysis.
