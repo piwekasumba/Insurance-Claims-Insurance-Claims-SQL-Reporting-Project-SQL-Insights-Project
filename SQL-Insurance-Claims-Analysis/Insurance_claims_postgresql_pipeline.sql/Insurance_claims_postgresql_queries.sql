@@ -2,196 +2,75 @@
 
 ## Executive Summary
 
-This project explores how PostgreSQL can be used to analyse insurance claims data and produce reporting that supports business decision-making.
+This project demonstrates how PostgreSQL can be used to transform structured insurance claims data into reporting-ready information for business analysis and operational decision-making.
 
-Using a simulated relational dataset, I cleaned and analysed claims data, developed reporting-focused SQL queries, calculated key business metrics, and created reporting-ready outputs. The project reflects the type of analytical thinking expected from an entry-level Reporting Analyst working with operational business data.
+Using a simulated insurance dataset, I worked through a practical SQL reporting workflow covering relational database design, data preparation, SQL analysis, KPI calculation, reporting summaries, exception monitoring, and export-ready outputs.
 
----
-
-# Business Scenario
-
-Insurance companies process large volumes of claims that need to be monitored to understand customer activity, operational performance, and potential areas of business risk.
-
-Accurate reporting helps business teams monitor claim trends, identify high-value claims, measure operational performance, and support informed decision-making.
-
-This project demonstrates how SQL can transform structured insurance data into meaningful business reporting.
+The project is designed to demonstrate the practical SQL and business reporting skills expected from an entry-level Reporting Analyst.
 
 ---
 
-# Reporting Objectives
+## Business Scenario
 
-- Build reporting-focused SQL queries
-- Analyse insurance claims data
-- Calculate business KPIs
-- Monitor claims trends over time
-- Produce reporting-ready datasets
-- Support operational reporting and business decision-making
+Insurance businesses need reliable reporting to monitor claims activity, understand changes over time, identify high-value claims, and support operational decision-making.
+
+This project demonstrates how structured claims and customer data can be analysed using PostgreSQL to produce consistent reporting outputs that help business users understand claims performance.
+
+The analysis focuses on reporting and operational monitoring rather than making unsupported fraud or insurance risk predictions.
 
 ---
 
-# Dataset
+## Project Objectives
 
-**Dataset Type**
+- Build a relational PostgreSQL database structure
+- Prepare insurance claims data for analysis
+- Apply SQL-based data cleaning and transformation
+- Develop reporting-focused SQL queries
+- Calculate practical business KPIs
+- Analyse claims trends and claim values
+- Produce customer and policy reporting summaries
+- Create exception and monitoring reports
+- Prepare reporting-ready datasets and export outputs
+- Connect SQL analysis to business reporting requirements
 
-Simulated Insurance Claims Dataset
+---
 
-**Database**
+## Dataset
 
-PostgreSQL
+**Dataset Type:** Simulated Insurance Claims Dataset
 
-### Focus Areas
+**Database:** PostgreSQL
+
+### Main Data Areas
 
 - Customers
 - Insurance Policies
 - Claims
 - Claim Status
-- Operational Reporting
+- Claim Types
+- Incident Information
+- Settlement Information
 
 ---
 
-# Skills Demonstrated
+## SQL Reporting Workflow
 
-## SQL
+The project follows a structured reporting workflow:
 
-- PostgreSQL
-- SELECT
-- WHERE
-- GROUP BY
-- ORDER BY
-- Aggregate Functions
-- INNER JOIN
-- LEFT JOIN
-- CASE Expressions
-- Common Table Expressions (CTEs)
+```text
+Raw Data
+   ↓
+Database Structure
+   ↓
+Data Preparation
+   ↓
+SQL Transformation
+   ↓
+Reporting Tables
+   ↓
+Business Analysis
+   ↓
+Exception Monitoring
+   ↓
+Reporting Outputs
 
-## Reporting & Analysis
-
-- Business Reporting
-- KPI Reporting
-- Claims Analysis
-- Trend Analysis
-- Risk Reporting
-- Data Summarisation
-
-## Database
-
-- Relational Database Design
-- Data Modelling
-- Primary and Foreign Keys
-- Table Relationships
-- Basic Query Optimisation
-
-## Professional
-
-- Analytical Thinking
-- Problem Solving
-- Attention to Detail
-- Business Communication
-
----
-
-# Reporting Outputs
-
-- Customer claims summaries
-- Policy performance reporting
-- Monthly claims trend reports
-- Claim severity reporting
-- Claim approval reporting
-- High-value customer reporting
-- Reporting-ready datasets for dashboards
-- Operational reporting queries
-
----
-
-# Business Insights
-
-The SQL analysis supports business reporting by:
-
-- Identifying customers with the highest claim values
-- Monitoring claim severity across the business
-- Analysing monthly claims trends
-- Comparing claim approval performance
-- Linking customer and claims data for reporting
-- Supporting operational monitoring through SQL reporting
-
----
-
-# Business Recommendations
-
-Based on the analysis:
-
-- Monitor high-value claims through regular KPI reporting.
-- Track monthly claims trends to identify changes over time.
-- Review high-risk policies requiring additional investigation.
-- Use reusable SQL queries to improve reporting efficiency.
-- Support operational decision-making with structured reporting outputs.
-
----
-
-# Example Business Question
-
-## Business Question
-
-Which customers generated the highest total claim costs?
-
-## Why It Matters
-
-High-cost customers may require additional monitoring to support claims management, operational reporting, and risk assessment.
-
-## Reporting Outcome
-
-Produces a ranked customer claims report that can be used to support business reporting and operational review.
-
----
-
-# What I Learned
-
-Through this project I strengthened my ability to:
-
-- Write structured SQL queries
-- Work with relational databases
-- Clean and transform business data
-- Analyse insurance claims data
-- Build reporting-focused SQL solutions
-- Produce reporting-ready business insights
-- Connect SQL analysis to business reporting requirements
-
----
-
-# Repository Highlights
-
-- PostgreSQL database
-- Relational database design
-- Data cleaning
-- SQL transformations
-- Reporting-focused SQL queries
-- Business KPI reporting
-- Claims trend analysis
-- Business recommendations
-- Project documentation
-
----
-
-# About This Project
-
-I completed this project as part of building my SQL portfolio while preparing for entry-level Reporting Analyst and Data Analyst opportunities in South Africa.
-
-The project focuses on using SQL to analyse insurance claims data, produce reporting-ready outputs, calculate business KPIs, and support operational reporting through structured analysis.
-
----
-
-# Why This Project Matters
-
-Reporting Analysts use SQL to transform business data into accurate, reliable information that supports operational reporting and decision-making.
-
-This project demonstrates that workflow by moving from relational data to reporting-ready outputs using business-focused SQL analysis.
-
----
-
-# About Me
-
-**Piwe Kasumba**
-
-Aspiring Reporting Analyst (SQL)
-
-I am building practical SQL projects focused on business reporting, KPI analysis, operational reporting, and decision support while preparing for my first Reporting Analyst opportunity in South Africa.
