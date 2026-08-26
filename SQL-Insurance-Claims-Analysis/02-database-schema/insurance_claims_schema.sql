@@ -1,11 +1,24 @@
 -- ===========================================================
 -- INSURANCE CLAIMS RISK ANALYTICS DATABASE
--- PostgreSQL Relational Schema
+-- PostgreSQL Relational Database Schema
+--
+-- Purpose:
+-- Create the core database structure used for insurance claims
+-- reporting and analysis.
+--
+-- The schema demonstrates:
+-- • Relational database design
+-- • Primary and foreign keys
+-- • Data validation constraints
+-- • Lookup tables
+-- • Default values
+-- • Indexes for common reporting queries
 -- ===========================================================
+
 
 -- ===========================================================
 -- CUSTOMERS
--- Stores customer information used for reporting and analysis.
+-- Stores customer information used for claims reporting.
 -- ===========================================================
 
 CREATE TABLE customers (
@@ -21,6 +34,7 @@ CREATE TABLE customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 -- ===========================================================
 -- CLAIM STATUS LOOKUP
 -- Standardises claim statuses for consistent reporting.
@@ -31,12 +45,16 @@ CREATE TABLE claim_status_lookup (
     status_name VARCHAR(20) UNIQUE NOT NULL
 );
 
+
+-- Insert the standard claim statuses used by the project.
+
 INSERT INTO claim_status_lookup (status_name)
 VALUES
-('Pending'),
-('Approved'),
-('Rejected'),
-('Under Review');
+    ('Pending'),
+    ('Approved'),
+    ('Rejected'),
+    ('Under Review');
+
 
 -- ===========================================================
 -- CLAIMS
@@ -71,27 +89,37 @@ CREATE TABLE claims (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 -- ===========================================================
 -- INDEXES
--- Improve query performance for reporting workloads.
+-- Support common reporting and filtering queries.
 -- ===========================================================
 
--- Frequently used when analysing policies
+-- Supports policy-level analysis.
+
 CREATE INDEX idx_claims_policy_number
 ON claims(policy_number);
 
--- Frequently used when joining customers and claims
+
+-- Supports customer-to-claims joins.
+
 CREATE INDEX idx_claims_customer
 ON claims(customer_id);
 
--- Frequently used for monthly and yearly reporting
+
+-- Supports date-based claims reporting.
+
 CREATE INDEX idx_claims_claim_date
 ON claims(claim_date);
 
--- Frequently used when reporting by claim status
+
+-- Supports reporting by claim status.
+
 CREATE INDEX idx_claims_status
 ON claims(status_id);
 
--- Supports customer searches
+
+-- Supports customer searches by surname.
+
 CREATE INDEX idx_customers_last_name
 ON customers(last_name);
