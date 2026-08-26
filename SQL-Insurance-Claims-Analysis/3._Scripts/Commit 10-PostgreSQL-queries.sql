@@ -1,67 +1,152 @@
--- =========================
--- EXTRACT LAYER (RAW TABLE)
--- =========================
+-- ==========================================================
+-- INSURANCE CLAIMS SQL ETL WORKFLOW
+-- PostgreSQL
+--
+-- Purpose:
+-- Demonstrate a simple Extract, Transform and Load workflow
+-- for preparing insurance claims data for reporting.
+--
+-- Workflow:
+-- 1. Extract raw claims data into a staging table
+-- 2. Validate and standardize the data
+-- 3. Create reporting-ready derived fields
+-- 4. Prepare summary data for business reporting
+-- ==========================================================
+
+
+-- ==========================================================
+-- EXTRACT LAYER
+-- Raw claims staging table
+-- ==========================================================
 
 CREATE TABLE IF NOT EXISTS claims_raw (
-    claim_id SERIAL PRIMARY KEY,
-    policy_id INT,
-    customer_id INT,
-    claim_amount NUMERIC,
+    claim_id INT PRIMARY KEY,
+    customer_id VARCHAR(10),
+    policy_id VARCHAR(20),
     claim_date DATE,
-    policy_type VARCHAR(50),
-    fraud_flag BOOLEAN DEFAULT FALSE
+    claim_type VARCHAR(50),
+    claim_amount NUMERIC(12,2),
+    claim_status VARCHAR(20),
+    incident_city VARCHAR(100),
+    incident_type VARCHAR(100),
+    police_report VARCHAR(10),
+    days_to_settle INT
 );
 
--- =========================
--- BASIC DATA CLEANING
--- =========================
 
--- Remove invalid records (missing critical values)
-DELETE FROM claims_raw
-WHERE claim_amount IS NULL
-   OR claim_date IS NULL;
+-- ==========================================================
+-- DATA VALIDATION
+-- Identify records with missing critical reporting fields.
+-- ==========================================================
 
--- Standardize text values
-UPDATE claims_raw
-SET policy_type = INITCAP(policy_type);
-
--- =========================
--- TRANSFORMATION LAYER (DERIVED TABLE)
--- =========================
-
-CREATE TABLE claims_clean AS
 SELECT
     claim_id,
-    policy_id,
     customer_id,
-    claim_amount,
+    policy_id,
     claim_date,
-    policy_type,
-    fraud_flag,
+    claim_amount
+FROM claims_raw
+WHERE customer_id IS NULL
+   OR policy_id IS NULL
+   OR claim_amount IS NULL;
 
-    -- Derived time feature
-    EXTRACT(YEAR FROM claim_date) AS claim_year,
 
-    -- Business risk classification
+-- ==========================================================
+-- TRANSFORMATION LAYER
+-- Create a reporting-ready claims dataset.
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS claims_reporting AS
+SELECT
+    claim_id,
+    customer_id,
+    policy_id,
+    claim_date,
+    claim_type,
+    claim_amount,
+    claim_status,
+    incident_city,
+    incident_type,
+    police_report,
+    days_to_settle,
+
+    EXTRACT(YEAR FROM claim_date)::INT AS claim_year,
+
+    EXTRACT(MONTH FROM claim_date)::INT AS claim_month,
+
     CASE
         WHEN claim_amount > 50000 THEN 'High'
-        WHEN claim_amount BETWEEN 10000 AND 50000 THEN 'Medium'
+        WHEN claim_amount >= 10000 THEN 'Medium'
         ELSE 'Low'
-    END AS claim_risk_level
+    END AS claim_severity,
+
+    CASE
+        WHEN days_to_settle IS NULL THEN 'Unsettled'
+        WHEN days_to_settle <= 10 THEN '0-10 Days'
+        WHEN days_to_settle <= 20 THEN '11-20 Days'
+        ELSE '21+ Days'
+    END AS settlement_time_group
 
 FROM claims_raw;
 
--- =========================
--- AGGREGATION LAYER (REPORTING TABLE)
--- =========================
 
-CREATE TABLE claims_summary AS
+-- ==========================================================
+-- REPORTING SUMMARY
+-- Summarise claims by claim type.
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS claims_type_summary AS
 SELECT
-    policy_type,
+    claim_type,
     COUNT(*) AS total_claims,
-    AVG(claim_amount) AS avg_claim_amount,
     SUM(claim_amount) AS total_claim_amount,
-    SUM(CASE WHEN fraud_flag = TRUE THEN 1 ELSE 0 END) AS total_fraud_cases
-FROM claims_clean
-GROUP BY policy_type;
+    ROUND(AVG(claim_amount), 2) AS average_claim_amount
+FROM claims_reporting
+GROUP BY claim_type;
+
+
+-- ==========================================================
+-- REPORTING SUMMARY
+-- Summarise claims by status.
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS claims_status_summary AS
+SELECT
+    claim_status,
+    COUNT(*) AS total_claims,
+    SUM(claim_amount) AS total_claim_amount,
+    ROUND(AVG(claim_amount), 2) AS average_claim_amount
+FROM claims_reporting
+GROUP BY claim_status;
+
+
+-- ==========================================================
+-- REPORTING SUMMARY
+-- Summarise claims by incident city.
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS claims_city_summary AS
+SELECT
+    incident_city,
+    COUNT(*) AS total_claims,
+    SUM(claim_amount) AS total_claim_amount,
+    ROUND(AVG(claim_amount), 2) AS average_claim_amount
+FROM claims_reporting
+GROUP BY incident_city;
+
+
+-- ==========================================================
+-- DATA QUALITY SUMMARY
+-- Identify missing claim dates and unsettled claims.
+-- ==========================================================
+
+SELECT
+    COUNT(*) FILTER (WHERE claim_date IS NULL)
+        AS missing_claim_dates,
+
+    COUNT(*) FILTER (WHERE days_to_settle IS NULL)
+        AS unsettled_claims
+
+FROM claims_raw;
+
 
