@@ -1,6 +1,6 @@
-# Insurance Claims SQL Reporting Project
+- Insurance Claims SQL Reporting Project
 
-## Project Overview
+- Project Overview
 
 This project demonstrates how I used PostgreSQL and SQL to analyse a simulated insurance claims dataset from a business reporting perspective.
 
@@ -10,7 +10,7 @@ The goal is to demonstrate how structured claims data can be transformed into us
 
 ---
 
-## Business Scenario
+- Business Scenario
 
 Insurance companies process large volumes of claims data. Accurate reporting helps teams monitor claim activity, understand claim costs, identify trends, and review operational performance.
 
@@ -20,7 +20,7 @@ The analysis focuses on practical reporting questions rather than making unsuppo
 
 ---
 
-## Project Objectives
+- Project Objectives
 
 - Build a relational database using PostgreSQL
 - Organise customer and claims data into related tables
@@ -35,7 +35,7 @@ The analysis focuses on practical reporting questions rather than making unsuppo
 
 ---
 
-## Dataset
+- Dataset
 
 | Item | Description |
 |---|---|
@@ -48,7 +48,7 @@ The analysis focuses on practical reporting questions rather than making unsuppo
 
 ---
 
-## Project Structure
+- Project Structure
 
 ```text
 SQL-Insurance-Claims-Analysis/
