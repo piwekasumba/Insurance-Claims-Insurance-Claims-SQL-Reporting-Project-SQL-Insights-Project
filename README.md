@@ -46,15 +46,19 @@ The data is for portfolio and learning purposes and does not represent real insu
 ---
 ## Business Questions
 
-The analysis explores questions such as:
+The reporting analysis is designed to answer practical insurance management questions:
 
-* Which claim severity levels are associated with the highest claim costs?
-* How many claims fall into each severity category?
-* How does claim activity change over time?
-* What is the average claim amount?
-* What is the claim approval rate?
-* Which reporting KPIs are useful for monitoring claims activity?
-* How can related insurance tables be combined to answer reporting questions?
+| Business Question                                                           | SQL Analysis                               | Reporting Purpose |
+|-----------------------------------------------------------------------------|--------------------------------------------|---|
+| Which claim severity levels are associated with the highest claim costs?    | Analyse claim amounts by severity category | Compare claim severity, understand where higher claim costs are concentrated|
+| How many claims fall into each severity category?                           | Count claims by severity                   | Monitor the distribution of claims across severity levels                   |
+| How does claim activity change over time?                                   | Aggregate claims by relevant time period   | Identify changes in claims activity that may require further investigation  |
+| What is the average claim amount?                                           | Calculate average claim value              | Monitor the typical financial size of claims                                |
+| What is the claim approval rate?                                            | Compare approved claims with total claims  | Monitor an important claims-processing KPI                                  |
+| Which reporting KPIs are useful for monitoring claims activity?             | Calculate and compare claims measures      | Support consistent management reporting                                     |
+| How can related insurance tables be combined to answer reporting questions? | Join customer, policy and claims data      | Demonstrate relational data transformed into reporting information          |
+
+The purpose is not only to produce SQL query results, but to turn those results into information that could support claims monitoring, performance review and further business investigation.
 ---
 ## SQL Analysis
 
@@ -62,28 +66,44 @@ The project uses SQL to join, aggregate and analyse the insurance data.
 
 The analysis includes areas such as:
 
-* Claims summaries
-* Claim severity analysis
-* Claim value analysis
-* Approval metrics
-* Claim frequency
-* High-risk claim indicators
-* Customer claim activity
-* Time-based claim analysis
+- Claims summaries
+- Claim severity analysis
+- Claim value analysis
+- Approval metrics
+- Claim frequency
+- High-risk claim indicators
+- Customer claim activity
+- Time-based claim analysis
 
-The repository contains the SQL analysis work under the `SQL-Insurance-Claims-Analysis` directory.
+The project uses SQL joins, aggregation and KPI calculations to turn related insurance records into structured reporting outputs.
+
+The reporting workflow follows:
+
+- **Business Question → SQL Analysis → Result → Reporting Interpretation**
+
+For example, a claim-severity analysis does more than group claims into categories. The resulting comparison can help identify differences in claim activity and claim costs across severity levels, providing an evidence base for further investigation.
+
+Similarly, approval, claim-frequency, customer-activity and time-based analysis can provide different perspectives for monitoring claims performance.
+
+The SQL results remain the evidence base. Business interpretations should be made from the actual results rather than assumptions about the dataset.
 ---
-## Key KPIs
+## Key Findings
 
-The project includes reporting measures such as:
+The SQL analysis produces reporting evidence across claim volume, claim severity, claim value, approval activity, customer activity and changes over time.
 
-* Total Claims
-* Total Claim Value
-* Average Claim Amount
-* Claim Approval Rate
-* Claim Frequency
-* High-Risk Claim Ratio
-* Customer Claim Activity
+The findings should be interpreted directly from the SQL results. Examples of the reporting questions supported by the analysis include:
+
+- Comparing claim activity across severity categories
+- Reviewing differences in claim values
+- Monitoring the average claim amount
+- Reviewing claim approval performance
+- Identifying patterns in claim frequency
+- Examining customer claim activity
+- Monitoring changes in claims activity over time
+
+These findings demonstrate how SQL analysis can turn related insurance records into structured reporting information.
+
+Specific numerical findings are intentionally not stated here unless they can be verified directly from the project's SQL results.
 ---
 ## Key Findings
 
@@ -95,16 +115,31 @@ This README therefore avoids adding unsupported numerical claims and keeps the f
 ---
 ## Business / Reporting Insights
 
-The project demonstrates how claims reporting can help analysts and business users:
+The project demonstrates a reporting workflow where SQL analysis is used to answer business questions and support claims monitoring.
 
-* Monitor claim volumes
-* Review claim costs
-* Compare claim severity
-* Track approval measures
-* Identify areas requiring further investigation
-* Monitor changes in claims activity over time
+Examples include:
 
-The reporting value comes from turning several related tables into measures that are easier to review and compare.
+- Monitoring claim volumes
+- Comparing claim severity
+- Reviewing claim costs
+- Monitoring approval measures
+- Examining customer claim activity
+- Identifying changes in claims activity over time
+- Highlighting areas that may require further investigation
+
+The business meaning depends on the actual SQL result.
+
+For example:
+
+**Business question:** Which claim severity levels are associated with the highest claim costs?
+
+**SQL analysis:** Group claims by severity and calculate the relevant claim-value measures.
+
+**Result:** The query produces a comparison of claim activity and claim values across severity categories.
+
+**Reporting interpretation:** The comparison can help reporting users understand where higher claim costs are concentrated and where further investigation may be appropriate.
+
+This approach demonstrates that SQL reporting is not simply about producing query outputs. The objective is to make business performance and activity easier to understand, compare and monitor.
 ---
 ## Data Quality Considerations
 
