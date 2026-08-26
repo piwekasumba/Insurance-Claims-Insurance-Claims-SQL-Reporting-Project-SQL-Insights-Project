@@ -115,31 +115,109 @@ This README therefore avoids adding unsupported numerical claims and keeps the f
 ---
 ## Business / Reporting Insights
 
-The project demonstrates a reporting workflow where SQL analysis is used to answer business questions and support claims monitoring.
+The purpose of the analysis is to move beyond producing SQL results and connect each result to an insurance reporting question and its potential business meaning.
 
-Examples include:
+The reporting workflow can be viewed as:
 
-- Monitoring claim volumes
-- Comparing claim severity
-- Reviewing claim costs
-- Monitoring approval measures
-- Examining customer claim activity
-- Identifying changes in claims activity over time
-- Highlighting areas that may require further investigation
+- **Business Question → SQL Analysis → Result → Reporting Interpretation**
 
-The business meaning depends on the actual SQL result.
+### Example 1: Claim Severity
 
-For example:
+**Business question:** Which claim severity levels are associated with higher claim costs?
 
-**Business question:** Which claim severity levels are associated with the highest claim costs?
+**SQL analysis:**  
 
-**SQL analysis:** Group claims by severity and calculate the relevant claim-value measures.
+Claims are grouped by severity and analysed using aggregate measures such as claim count and claim value.
 
-**Result:** The query produces a comparison of claim activity and claim values across severity categories.
+**Result:**  
 
-**Reporting interpretation:** The comparison can help reporting users understand where higher claim costs are concentrated and where further investigation may be appropriate.
+The query produces a comparison of claims and claim costs across severity categories.
 
-This approach demonstrates that SQL reporting is not simply about producing query outputs. The objective is to make business performance and activity easier to understand, compare and monitor.
+**Reporting interpretation:**  
+
+The comparison can help reporting users understand how claim severity relates to claim costs and identify categories that may require closer monitoring.
+
+### Example 2: Claim Approval Rate
+
+**Business question:** What proportion of claims are approved?
+
+**SQL analysis:**  
+
+Claim outcomes are grouped and used to calculate an approval measure.
+
+**Result:**  
+
+The reporting output provides an approval-rate view of claims activity.
+
+**Reporting interpretation:**  
+
+This can help users monitor claim outcomes and identify changes that may require further investigation.
+
+### Example 3: Average Claim Amount
+
+**Business question:** What is the average value of an insurance claim?
+
+**SQL analysis:**  
+
+Claim amounts are aggregated to calculate the average claim value.
+
+**Result:**  
+
+The query provides a consistent measure of average claim size.
+
+**Reporting interpretation:**  
+
+Average claim value can provide context when monitoring claim costs and comparing claim activity across different periods or categories.
+
+### Example 4: Claim Activity Over Time
+
+**Business question:** How does claim activity change over time?
+
+**SQL analysis:**  
+
+Claims are grouped using their relevant date information and summarised over time.
+
+**Result:**  
+
+The report provides a time-based view of claim activity.
+
+**Reporting interpretation:**  
+
+Changes in claim activity can help reporting users identify periods requiring further investigation and support ongoing claims monitoring.
+
+### Example 5: High-Risk Claim Indicators
+
+**Business question:** Which claims or claim categories may require additional risk monitoring?
+
+**SQL analysis:**  
+
+Claim characteristics such as severity and claim value are analysed using SQL conditions and aggregation.
+
+**Result:**  
+
+The analysis produces structured indicators that can be used to compare higher-risk claim activity.
+
+**Reporting interpretation:**  
+
+These indicators can help identify areas that deserve further investigation rather than treating every claim as having the same level of risk.
+
+## Reporting Value
+
+The main reporting value of this project is the ability to connect related insurance data to measurable business questions.
+
+The analysis follows a simple reporting process:
+
+1. Identify the business question.
+2. Determine which insurance data is required.
+3. Join and prepare the relevant records.
+4. Calculate the appropriate KPI or measure.
+5. Review the SQL result.
+6. Interpret what the result means for reporting.
+7. Identify areas that may require further investigation.
+
+The project therefore demonstrates that SQL reporting is not only about writing queries. It also involves selecting appropriate measures and explaining what the resulting information can tell a business.
+
+Specific numerical findings should be taken directly from the SQL query results rather than estimated in the README.
 ---
 ## Data Quality Considerations
 
