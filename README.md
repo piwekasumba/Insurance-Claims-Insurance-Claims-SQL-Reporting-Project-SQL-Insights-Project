@@ -1,239 +1,372 @@
 # Insurance Claims Risk Analytics SQL Project
 
-A PostgreSQL project focused on analysing simulated insurance claims data, calculating reporting KPIs and exploring patterns that can support claims and risk monitoring.
+A PostgreSQL project analysing simulated insurance claims data to produce reporting KPIs, investigate claim patterns and explore risk-related business questions using SQL.
+
+The project follows a reporting workflow:
+
+**Business Question → Data → SQL Analysis → KPI → Validation → Reporting Interpretation**
+
 ---
-## Business Problem
 
-Insurance businesses need reliable reporting to monitor claims activity, claim costs and changes in risk indicators.
+## Why This Project Exists
 
-Without structured analysis, it can be difficult to understand claim volumes, claim severity and other performance measures.
+Insurance organisations need reliable information to monitor claims activity, claim costs, processing outcomes and potential risk indicators.
 
-This project uses SQL to turn simulated insurance data into structured reporting outputs that can be used to explore these questions.
+Reporting questions may include:
+
+* How many claims are being submitted?
+* What is the average claim amount?
+* How are claims distributed by severity?
+* How does claims activity change over time?
+* What proportion of claims are approved?
+* Where are higher claim costs concentrated?
+* Which patterns may require further investigation?
+
+This project uses simulated insurance data to explore those questions through PostgreSQL and SQL.
+
 ---
+
 ## Project Objective
 
-The objective is to use PostgreSQL and SQL to:
+The objective is to analyse related insurance records and transform them into structured reporting outputs.
 
-* Analyse insurance claims data
-* Connect related customer, policy and claims information
-* Calculate reporting KPIs
-* Explore claim severity and claim activity
-* Produce structured SQL outputs
-* Translate the analysis into business reporting observations
+The project focuses on:
+
+* Relational data analysis
+* SQL joins
+* Claims reporting
+* KPI calculation
+* Claim severity
+* Claim values
+* Approval activity
+* Time-based analysis
+* Customer claim activity
+* Risk-related indicators
+* Data-quality considerations
+* Reporting interpretation
+
 ---
-## Tools / Technologies
+
+## Industry Context
+
+This project represents the **insurance** side of my portfolio.
+
+Insurance reporting can involve areas such as:
+
+* Claims volume
+* Claim severity
+* Claim costs
+* Approval rates
+* Customer claim activity
+* Operational trends
+* Risk indicators
+* Exception investigation
+
+The project demonstrates how SQL can be applied to an industry-specific reporting problem rather than only to generic datasets.
+
+---
+
+## Tools & Technologies
 
 * PostgreSQL
 * SQL
 * SQL joins
 * Aggregate functions
 * Common Table Expressions (CTEs)
+* Filtering
 * Data preparation
-* KPI analysis
-* Business reporting
+* KPI calculations
+* Reporting analysis
+
 ---
+
 ## Dataset
 
 The project uses a simulated insurance dataset.
 
-The main business areas include:
+The main business entities include:
 
 * Customers
 * Policies
 * Claims
 
-The data is for portfolio and learning purposes and does not represent real insurance customers or claims.
+The data is intended for learning and portfolio purposes.
+
+It does not represent real insurance customers, policies or claims.
+
 ---
+
 ## Business Questions
 
-The reporting analysis is designed to answer practical insurance management questions:
+| Business Question                                                 | SQL Analysis                                          | Reporting Purpose                        |
+| ----------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------- |
+| Which severity categories are associated with higher claim costs? | Group claims by severity and calculate claim measures | Compare claim severity and cost          |
+| How many claims fall into each severity category?                 | Count claims by severity                              | Monitor claim distribution               |
+| How does claim activity change over time?                         | Aggregate claims by reporting period                  | Identify changes requiring investigation |
+| What is the average claim amount?                                 | Calculate average claim value                         | Monitor typical claim size               |
+| What is the claim approval rate?                                  | Compare approved claims with total claims             | Monitor claims-processing performance    |
+| Which customers have significant claim activity?                  | Aggregate claims by customer                          | Examine customer-level patterns          |
+| How can customer, policy and claim information be combined?       | Join related tables                                   | Produce more complete reporting outputs  |
 
-| Business Question                                                           | SQL Analysis                               | Reporting Purpose |
-|-----------------------------------------------------------------------------|--------------------------------------------|---|
-| Which claim severity levels are associated with the highest claim costs?    | Analyse claim amounts by severity category | Compare claim severity, understand where higher claim costs are concentrated|
-| How many claims fall into each severity category?                           | Count claims by severity                   | Monitor the distribution of claims across severity levels                   |
-| How does claim activity change over time?                                   | Aggregate claims by relevant time period   | Identify changes in claims activity that may require further investigation  |
-| What is the average claim amount?                                           | Calculate average claim value              | Monitor the typical financial size of claims                                |
-| What is the claim approval rate?                                            | Compare approved claims with total claims  | Monitor an important claims-processing KPI                                  |
-| Which reporting KPIs are useful for monitoring claims activity?             | Calculate and compare claims measures      | Support consistent management reporting                                     |
-| How can related insurance tables be combined to answer reporting questions? | Join customer, policy and claims data      | Demonstrate relational data transformed into reporting information          |
-
-The purpose is not only to produce SQL query results, but to turn those results into information that could support claims monitoring, performance review and further business investigation.
 ---
+
+## Reporting Workflow
+
+```text
+Business Question
+        ↓
+Identify Required Data
+        ↓
+Join Customer / Policy / Claim Data
+        ↓
+Define KPI
+        ↓
+Calculate Measure
+        ↓
+Validate Result
+        ↓
+Produce Reporting Output
+        ↓
+Interpret Pattern
+        ↓
+Identify Further Investigation
+```
+
+This workflow keeps the analysis focused on the reporting question rather than treating SQL output as the final answer.
+
+---
+
 ## SQL Analysis
 
-The project uses SQL to join, aggregate and analyse the insurance data.
+### Claims Summary
 
-The analysis includes areas such as:
+Provides an overview of claims activity in the dataset.
 
-- Claims summaries
-- Claim severity analysis
-- Claim value analysis
-- Approval metrics
-- Claim frequency
-- High-risk claim indicators
-- Customer claim activity
-- Time-based claim analysis
+### Claim Severity Analysis
 
-The project uses SQL joins, aggregation and KPI calculations to turn related insurance records into structured reporting outputs.
+Groups claims by severity to compare claim counts and values.
 
-The reporting workflow follows:
+### Claim Value Analysis
 
-- **Business Question → SQL Analysis → Result → Reporting Interpretation**
+Examines claim amounts using aggregate measures.
 
-For example, a claim-severity analysis does more than group claims into categories. The resulting comparison can help identify differences in claim activity and claim costs across severity levels, providing an evidence base for further investigation.
+### Claim Approval Analysis
 
-Similarly, approval, claim-frequency, customer-activity and time-based analysis can provide different perspectives for monitoring claims performance.
+Calculates approval-related reporting measures.
 
-The SQL results remain the evidence base. Business interpretations should be made from the actual results rather than assumptions about the dataset.
+### Claims Over Time
+
+Groups claims using relevant date information to identify changes in activity.
+
+### Customer Claim Activity
+
+Connects customers with their claim activity for customer-level analysis.
+
+### Risk-Related Indicators
+
+Uses available claim characteristics to identify categories or records that may warrant additional investigation.
+
+These indicators are analytical signals, not formal insurance risk scores.
+
 ---
-## Key Findings
 
-The SQL analysis produces reporting evidence across claim volume, claim severity, claim value, approval activity, customer activity and changes over time.
+## Business Question → SQL Analysis → Reporting Meaning
 
-The findings should be interpreted directly from the SQL results. Examples of the reporting questions supported by the analysis include:
+### 1. Claim Severity
 
-- Comparing claim activity across severity categories
-- Reviewing differences in claim values
-- Monitoring the average claim amount
-- Reviewing claim approval performance
-- Identifying patterns in claim frequency
-- Examining customer claim activity
-- Monitoring changes in claims activity over time
+**Business question**
 
-These findings demonstrate how SQL analysis can turn related insurance records into structured reporting information.
+Which claim severity levels are associated with higher claim costs?
 
-Specific numerical findings are intentionally not stated here unless they can be verified directly from the project's SQL results.
+**SQL approach**
+
+Claims are grouped by severity and analysed using measures such as claim count and claim value.
+
+**Reporting output**
+
+A comparison of claim activity and claim costs across severity categories.
+
+**Reporting meaning**
+
+The comparison can help identify where higher claim costs are concentrated and where further investigation may be useful.
+
 ---
-## Key Findings
 
-The analysis is intended to identify differences in claim activity, claim severity and claim costs.
+### 2. Claim Approval Rate
 
-The main finding should come from the actual SQL results rather than assumptions about the dataset.
+**Business question**
 
-This README therefore avoids adding unsupported numerical claims and keeps the findings tied to the analysis contained in the repository.
----
-## Business / Reporting Insights
+What proportion of claims are approved?
 
-The purpose of the analysis is to move beyond producing SQL results and connect each result to an insurance reporting question and its potential business meaning.
-
-The reporting workflow can be viewed as:
-
-- **Business Question → SQL Analysis → Result → Reporting Interpretation**
-
-### Example 1: Claim Severity
-
-**Business question:** Which claim severity levels are associated with higher claim costs?
-
-**SQL analysis:**  
-
-Claims are grouped by severity and analysed using aggregate measures such as claim count and claim value.
-
-**Result:**  
-
-The query produces a comparison of claims and claim costs across severity categories.
-
-**Reporting interpretation:**  
-
-The comparison can help reporting users understand how claim severity relates to claim costs and identify categories that may require closer monitoring.
-
-### Example 2: Claim Approval Rate
-
-**Business question:** What proportion of claims are approved?
-
-**SQL analysis:**  
+**SQL approach**
 
 Claim outcomes are grouped and used to calculate an approval measure.
 
-**Result:**  
+**Reporting output**
 
-The reporting output provides an approval-rate view of claims activity.
+An approval-rate view of claims activity.
 
-**Reporting interpretation:**  
+**Reporting meaning**
 
-This can help users monitor claim outcomes and identify changes that may require further investigation.
+The measure can help monitor claim outcomes and identify changes over time.
 
-### Example 3: Average Claim Amount
+---
 
-**Business question:** What is the average value of an insurance claim?
+### 3. Average Claim Amount
 
-**SQL analysis:**  
+**Business question**
+
+What is the average value of an insurance claim?
+
+**SQL approach**
 
 Claim amounts are aggregated to calculate the average claim value.
 
-**Result:**  
+**Reporting output**
 
-The query provides a consistent measure of average claim size.
+A consistent measure of average claim size.
 
-**Reporting interpretation:**  
+**Reporting meaning**
 
-Average claim value can provide context when monitoring claim costs and comparing claim activity across different periods or categories.
+Average claim value provides context when monitoring claim costs and comparing categories or periods.
 
-### Example 4: Claim Activity Over Time
+---
 
-**Business question:** How does claim activity change over time?
+### 4. Claim Activity Over Time
 
-**SQL analysis:**  
+**Business question**
 
-Claims are grouped using their relevant date information and summarised over time.
+How does claim activity change over time?
 
-**Result:**  
+**SQL approach**
 
-The report provides a time-based view of claim activity.
+Claims are grouped using relevant date information and summarised by reporting period.
 
-**Reporting interpretation:**  
+**Reporting output**
 
-Changes in claim activity can help reporting users identify periods requiring further investigation and support ongoing claims monitoring.
+A time-based view of claims activity.
 
-### Example 5: High-Risk Claim Indicators
+**Reporting meaning**
 
-**Business question:** Which claims or claim categories may require additional risk monitoring?
+Changes can identify periods that deserve further investigation.
 
-**SQL analysis:**  
+---
 
-Claim characteristics such as severity and claim value are analysed using SQL conditions and aggregation.
+### 5. Risk-Related Indicators
 
-**Result:**  
+**Business question**
 
-The analysis produces structured indicators that can be used to compare higher-risk claim activity.
+Which claim characteristics may require additional monitoring?
 
-**Reporting interpretation:**  
+**SQL approach**
 
-These indicators can help identify areas that deserve further investigation rather than treating every claim as having the same level of risk.
+Available claim characteristics such as severity and claim value are analysed using SQL conditions and aggregation.
+
+**Reporting output**
+
+Structured indicators for comparing claim activity.
+
+**Reporting meaning**
+
+The indicators can help prioritise areas for investigation without presenting them as formal underwriting or actuarial conclusions.
+
+---
+
+## Data Quality & Validation
+
+Insurance reporting requires careful treatment of relationships between customers, policies and claims.
+
+This project considers:
+
+* Correct relationships between tables
+* Appropriate SQL joins
+* Consistent claim and policy records
+* Accurate aggregation
+* Missing or inconsistent values
+* Date consistency
+* KPI definitions
+* Validation of calculated measures
+* Avoiding duplicate records caused by incorrect joins
+
+A reporting result should be checked before being treated as a business conclusion.
+
+---
+
+## Reconciliation & Investigation
+
+When different analyses produce different claim totals or values, the difference should be investigated rather than ignored.
+
+Potential checks include:
+
+* Reporting dates
+* Claim status definitions
+* Severity definitions
+* Source tables
+* Join conditions
+* Duplicate records
+* Missing records
+* Aggregation logic
+* Inclusion/exclusion rules
+* Data-quality issues
+
+The purpose of reconciliation is to understand **where the difference came from and why it exists**.
+
+---
 
 ## Reporting Value
 
-The main reporting value of this project is the ability to connect related insurance data to measurable business questions.
+The project demonstrates how related insurance records can be transformed into useful reporting information.
 
-The analysis follows a simple reporting process:
+The process is:
 
-1. Identify the business question.
-2. Determine which insurance data is required.
-3. Join and prepare the relevant records.
-4. Calculate the appropriate KPI or measure.
-5. Review the SQL result.
-6. Interpret what the result means for reporting.
-7. Identify areas that may require further investigation.
+1. Define the business question.
+2. Identify the required data.
+3. Join the relevant tables.
+4. Define the measure.
+5. Calculate the KPI.
+6. Validate the result.
+7. Interpret the output.
+8. Identify questions requiring further investigation.
 
-The project therefore demonstrates that SQL reporting is not only about writing queries. It also involves selecting appropriate measures and explaining what the resulting information can tell a business.
-
-Specific numerical findings should be taken directly from the SQL query results rather than estimated in the README.
 ---
-## Data Quality Considerations
 
-Claims reporting depends on relationships between customers, policies and claims being handled correctly.
+## Key Skills Demonstrated
 
-Important considerations include:
+* PostgreSQL
+* SQL
+* Relational data analysis
+* SQL joins
+* Aggregation
+* CTEs
+* KPI calculation
+* Claims analysis
+* Data-quality awareness
+* Reporting validation
+* Risk-oriented business questions
+* Structured analytical thinking
 
-* Correct relationships between tables
-* Consistent claim and policy records
-* Accurate joins
-* Correct aggregation of claim values
-* Appropriate handling of missing or inconsistent data
-* Validation of calculated KPIs
-
-Because this is simulated data, the project demonstrates the analytical process rather than production insurance reporting.
 ---
+
+## Portfolio Role Alignment
+
+This project provides industry-specific evidence for my broader SQL reporting portfolio.
+
+It demonstrates how PostgreSQL can be applied to an insurance reporting context while remaining explicit that the data is simulated.
+
+The project supports my preparation for entry-level opportunities such as:
+
+* Junior Reporting Analyst
+* Reporting Analyst
+* Junior Data Analyst
+* Data Analyst
+* SQL-focused analyst roles
+
+with a primary focus on Johannesburg/Gauteng and credible remote opportunities across South Africa.
+
+It does not claim professional insurance, actuarial or enterprise analytics experience.
+
+---
+
 ## Project Structure
 
 ```text
@@ -250,36 +383,72 @@ Insurance-Claims-Insurance-Claims-SQL-Reporting-Project-SQL-Insights-Project
     ├── 4._Docs
     └── Insurance_claims_postgresql_pipeline.sql
 ```
+
 ---
+
 ## How to Run
-
-The repository contains the SQL analysis and supporting project files.
-
-A typical PostgreSQL workflow is:
 
 1. Install PostgreSQL.
 2. Create a database for the project.
-3. Review the files under `SQL-Insurance-Claims-Analysis`.
-4. Follow the SQL/scripts in the project to create and prepare the required tables.
-5. Run the analysis queries.
-6. Review the results against the business questions and KPIs.
+3. Review the files under:
 
-The exact execution order should follow the SQL and script files included in the repository.
+```text
+SQL-Insurance-Claims-Analysis
+```
+
+4. Review the available data and SQL stages.
+5. Follow the SQL/scripts in their intended sequence.
+6. Run the analysis queries.
+7. Compare the outputs with the business questions and KPI definitions.
+
+The exact execution order should follow the SQL and script files contained in the repository.
+
 ---
-## What This Project Demonstrates
 
-This project demonstrates my ability to:
+## How to Review This Project
 
-* Work with PostgreSQL
-* Analyse relational business data
-* Use SQL joins and aggregation
-* Build reporting KPIs
-* Explore claims and risk-related business questions
-* Organise analytical SQL into a structured project
-* Communicate reporting observations clearly
+A reviewer can start with:
+
+1. `README.md` — business context and reporting workflow
+2. `1._Data` — available project data
+3. `2._SQL` — SQL analysis
+4. `3._Scripts` — supporting scripts
+5. `4._Docs` — supporting documentation
+
+The key evidence is how the SQL connects insurance data to defined reporting questions.
+
 ---
+
+## Limitations
+
+This project uses simulated data.
+
+It is not:
+
+* A real insurance claims system
+* A production risk-management system
+* An actuarial model
+* A formal underwriting model
+* A real customer database
+* Professional insurance employment experience
+
+Risk-related indicators are analytical portfolio examples and should not be interpreted as production insurance decisions.
+
+---
+
+## What I Am Building Through This Project
+
+I am strengthening my ability to use PostgreSQL and SQL to investigate business questions where accuracy, definitions, data relationships and validation matter.
+
+The central workflow is:
+
+**Business Question → Data → SQL → Validation → Reporting Meaning**
+
+---
+
 ## About
 
-This project forms part of my SQL portfolio as I build practical evidence for entry-level Reporting Analyst opportunities.
+I am building practical SQL and PostgreSQL projects focused on business reporting, KPI analysis, data quality and industry-specific business questions.
 
-My focus is on using SQL and PostgreSQL to understand business data, produce useful reporting outputs and continue developing my analytical skills.
+This repository forms part of that portfolio and demonstrates my application of SQL to a simulated insurance reporting environment.
+
