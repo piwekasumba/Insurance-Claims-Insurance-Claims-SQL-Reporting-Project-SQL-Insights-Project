@@ -1,41 +1,30 @@
+
 -- ==========================================================
 -- INSURANCE CLAIMS SQL ETL WORKFLOW
 -- PostgreSQL
 --
 -- Purpose:
--- Demonstrate a simple Extract, Transform and Load workflow
--- for preparing insurance claims data for reporting.
+-- Prepare simulated insurance claims data for reporting.
+--
+-- Prerequisites:
+-- 1. Run the database schema script.
+-- 2. Load customer records into customers.
+-- 3. Load claims records into claims_raw.
 --
 -- Workflow:
--- 1. Extract raw claims data into a staging table
--- 2. Validate and standardize the data
--- 3. Create reporting-ready derived fields
--- 4. Prepare summary data for business reporting
+-- 1. Validate source records
+-- 2. Create a refreshed reporting dataset
+-- 3. Create refreshed summary tables
+-- 4. Report data-quality exceptions
+--
+-- Note:
+-- This script prepares reporting data. It does not load the
+-- source CSV files or prove that the source data is complete.
 -- ==========================================================
 
 
 -- ==========================================================
--- EXTRACT LAYER
--- Raw claims staging table
--- ==========================================================
-
-CREATE TABLE IF NOT EXISTS claims_raw (
-    claim_id INT PRIMARY KEY,
-    customer_id VARCHAR(10),
-    policy_id VARCHAR(20),
-    claim_date DATE,
-    claim_type VARCHAR(50),
-    claim_amount NUMERIC(12,2),
-    claim_status VARCHAR(20),
-    incident_city VARCHAR(100),
-    incident_type VARCHAR(100),
-    police_report VARCHAR(10),
-    days_to_settle INT
-);
-
-
--- ==========================================================
--- DATA VALIDATION
+-- 1. SOURCE DATA VALIDATION
 -- Identify records with missing critical reporting fields.
 -- ==========================================================
 
@@ -44,19 +33,48 @@ SELECT
     customer_id,
     policy_id,
     claim_date,
-    claim_amount
+    claim_type,
+    claim_amount,
+    claim_status
 FROM claims_raw
 WHERE customer_id IS NULL
    OR policy_id IS NULL
-   OR claim_amount IS NULL;
+   OR claim_amount IS NULL
+   OR claim_date IS NULL
+   OR claim_type IS NULL
+   OR claim_status IS NULL
+ORDER BY claim_id;
 
 
 -- ==========================================================
--- TRANSFORMATION LAYER
--- Create a reporting-ready claims dataset.
+-- 2. DATA-QUALITY REVIEW
+-- Identify missing claim dates and settlement durations.
+-- A missing duration does not prove that a claim is unsettled.
 -- ==========================================================
 
-CREATE TABLE IF NOT EXISTS claims_reporting AS
+SELECT
+    claim_id,
+    customer_id,
+    claim_status,
+    claim_date,
+    days_to_settle
+FROM claims_raw
+WHERE claim_date IS NULL
+   OR days_to_settle IS NULL
+ORDER BY claim_id;
+
+
+-- ==========================================================
+-- 3. TRANSFORMATION LAYER
+-- Refresh the reporting dataset on each run.
+-- ==========================================================
+
+DROP TABLE IF EXISTS claims_type_summary;
+DROP TABLE IF EXISTS claims_status_summary;
+DROP TABLE IF EXISTS claims_city_summary;
+DROP TABLE IF EXISTS claims_reporting;
+
+CREATE TABLE claims_reporting AS
 SELECT
     claim_id,
     customer_id,
@@ -75,13 +93,14 @@ SELECT
     EXTRACT(MONTH FROM claim_date)::INT AS claim_month,
 
     CASE
-        WHEN claim_amount > 50000 THEN 'High'
-        WHEN claim_amount >= 10000 THEN 'Medium'
-        ELSE 'Low'
+        WHEN claim_amount IS NULL THEN 'Unknown'
+        WHEN claim_amount < 10000 THEN 'Low'
+        WHEN claim_amount <= 20000 THEN 'Medium'
+        ELSE 'High'
     END AS claim_severity,
 
     CASE
-        WHEN days_to_settle IS NULL THEN 'Unsettled'
+        WHEN days_to_settle IS NULL THEN 'Not Recorded'
         WHEN days_to_settle <= 10 THEN '0-10 Days'
         WHEN days_to_settle <= 20 THEN '11-20 Days'
         ELSE '21+ Days'
@@ -91,11 +110,10 @@ FROM claims_raw;
 
 
 -- ==========================================================
--- REPORTING SUMMARY
--- Summarise claims by claim type.
+-- 4. REPORTING SUMMARY: CLAIM TYPE
 -- ==========================================================
 
-CREATE TABLE IF NOT EXISTS claims_type_summary AS
+CREATE TABLE claims_type_summary AS
 SELECT
     claim_type,
     COUNT(*) AS total_claims,
@@ -106,11 +124,10 @@ GROUP BY claim_type;
 
 
 -- ==========================================================
--- REPORTING SUMMARY
--- Summarise claims by status.
+-- 5. REPORTING SUMMARY: CLAIM STATUS
 -- ==========================================================
 
-CREATE TABLE IF NOT EXISTS claims_status_summary AS
+CREATE TABLE claims_status_summary AS
 SELECT
     claim_status,
     COUNT(*) AS total_claims,
@@ -121,11 +138,10 @@ GROUP BY claim_status;
 
 
 -- ==========================================================
--- REPORTING SUMMARY
--- Summarise claims by incident city.
+-- 6. REPORTING SUMMARY: INCIDENT CITY
 -- ==========================================================
 
-CREATE TABLE IF NOT EXISTS claims_city_summary AS
+CREATE TABLE claims_city_summary AS
 SELECT
     incident_city,
     COUNT(*) AS total_claims,
@@ -136,17 +152,62 @@ GROUP BY incident_city;
 
 
 -- ==========================================================
--- DATA QUALITY SUMMARY
--- Identify missing claim dates and unsettled claims.
+-- 7. DATA-QUALITY SUMMARY
+-- Report missing dates, amounts and settlement durations.
 -- ==========================================================
 
 SELECT
-    COUNT(*) FILTER (WHERE claim_date IS NULL)
-        AS missing_claim_dates,
+    COUNT(*) AS total_claim_records,
 
-    COUNT(*) FILTER (WHERE days_to_settle IS NULL)
-        AS unsettled_claims
+    COUNT(*) FILTER (
+        WHERE claim_date IS NULL
+    ) AS missing_claim_dates,
+
+    COUNT(*) FILTER (
+        WHERE claim_amount IS NULL
+    ) AS missing_claim_amounts,
+
+    COUNT(*) FILTER (
+        WHERE customer_id IS NULL
+    ) AS missing_customer_ids,
+
+    COUNT(*) FILTER (
+        WHERE policy_id IS NULL
+    ) AS missing_policy_ids,
+
+    COUNT(*) FILTER (
+        WHERE days_to_settle IS NULL
+    ) AS missing_settlement_durations
 
 FROM claims_raw;
+
+
+-- ==========================================================
+-- 8. BASIC REFRESH CHECKS
+-- Compare source and reporting row counts.
+-- ==========================================================
+
+SELECT
+    (SELECT COUNT(*) FROM claims_raw) AS raw_claim_count,
+    (SELECT COUNT(*) FROM claims_reporting) AS reporting_claim_count;
+
+
+-- ==========================================================
+-- 9. PREVIEW REPORTING SUMMARIES
+-- ==========================================================
+
+SELECT *
+FROM claims_type_summary
+ORDER BY total_claims DESC, claim_type;
+
+SELECT *
+FROM claims_status_summary
+ORDER BY total_claims DESC, claim_status;
+
+SELECT *
+FROM claims_city_summary
+ORDER BY total_claims DESC, incident_city;
+
+
 
 
