@@ -4,48 +4,59 @@
 --
 -- Purpose:
 -- Produce business-focused reporting outputs from the
--- reporting layer.
+-- reporting layer built from the simulated claims dataset.
+--
+-- Prerequisite tables:
+--   1. reporting_claims
+--   2. customer_claim_summary
+--   3. customers
 --
 -- Reporting focus:
--- • Claims severity
--- • Monthly claims performance
--- • Claim status performance
--- • Customer claims exposure
--- • Geographic claims reporting
--- • Policy type performance
--- • Settlement performance
+--   Claims severity, monthly performance, claim status,
+--   customer exposure, geography, policy type, settlement
+--   performance and data-quality exceptions.
+--
+-- Note:
+-- These reports describe the supplied simulated dataset.
+-- They do not establish real-world insurance risk or fraud.
 -- ==========================================================
 
 
 -- ==========================================================
 -- REPORT 1: CLAIMS BY SEVERITY
--- Business Question:
--- How many claims fall into each severity level and what is
--- their financial impact?
 --
--- Business Purpose:
--- Helps claims teams understand where claim costs are
--- concentrated and monitor financial exposure.
+-- Business question:
+-- How many claims fall into each severity level, and what
+-- is their recorded financial value?
+--
+-- Severity thresholds must match the reporting-layer script:
+--   Low:    below 10,000
+--   Medium: 10,000 to 20,000 inclusive
+--   High:   above 20,000
 -- ==========================================================
 
 SELECT
-    claim_severity,
+    COALESCE(claim_severity, 'Unknown / Unclassified')
+        AS claim_severity,
     COUNT(*) AS total_claims,
     SUM(claim_amount) AS total_claim_amount,
     ROUND(AVG(claim_amount), 2) AS average_claim_amount
 FROM reporting_claims
 GROUP BY claim_severity
-ORDER BY total_claim_amount DESC;
+ORDER BY
+    total_claim_amount DESC NULLS LAST,
+    claim_severity;
 
 
 -- ==========================================================
 -- REPORT 2: MONTHLY CLAIMS PERFORMANCE
--- Business Question:
--- How do claim volumes and claim costs change over time?
 --
--- Business Purpose:
--- Supports monthly reporting by monitoring changes in
--- claim activity and financial exposure.
+-- Business question:
+-- How do recorded claim volumes and claim values change
+-- across months?
+--
+-- Claims without a claim date are excluded because they
+-- cannot be assigned reliably to a reporting month.
 -- ==========================================================
 
 SELECT
@@ -65,38 +76,42 @@ ORDER BY
 
 
 -- ==========================================================
--- REPORT 3: CLAIM STATUS PERFORMANCE
--- Business Question:
--- How are claims distributed across their current statuses?
+-- REPORT 3: CLAIM STATUS DISTRIBUTION
 --
--- Business Purpose:
--- Supports operational monitoring by comparing claim volume
--- and financial value across approved, pending and rejected
--- claims.
+-- Business question:
+-- How are claims distributed across their recorded statuses?
+--
+-- claim_volume_percent is the percentage of all rows in
+-- reporting_claims represented by each status.
+-- This is a status distribution, not an approval rate.
 -- ==========================================================
 
 SELECT
-    claim_status,
+    COALESCE(claim_status, 'Unknown / Missing')
+        AS claim_status,
     COUNT(*) AS total_claims,
     SUM(claim_amount) AS total_claim_amount,
     ROUND(AVG(claim_amount), 2) AS average_claim_amount,
     ROUND(
-        100.0 * COUNT(*) / SUM(COUNT(*)) OVER (),
+        100.0 * COUNT(*)
+        / NULLIF(SUM(COUNT(*)) OVER (), 0),
         2
     ) AS claim_volume_percent
 FROM reporting_claims
 GROUP BY claim_status
-ORDER BY total_claim_amount DESC;
+ORDER BY
+    total_claim_amount DESC NULLS LAST,
+    claim_status;
 
 
 -- ==========================================================
 -- REPORT 4: TOP CUSTOMERS BY TOTAL CLAIM VALUE
--- Business Question:
--- Which customers generated the highest total claim value?
 --
--- Business Purpose:
--- Provides a ranked customer-level view for claims monitoring
--- and management reporting.
+-- Business question:
+-- Which customers have the highest recorded total claim value?
+--
+-- This is a ranking by recorded claim value. It is not a
+-- finding of customer misconduct or fraud.
 -- ==========================================================
 
 SELECT
@@ -110,127 +125,188 @@ SELECT
     average_claim_amount
 FROM customer_claim_summary
 WHERE total_claims > 0
-ORDER BY total_claim_amount DESC
+ORDER BY
+    total_claim_amount DESC NULLS LAST,
+    customer_id
 LIMIT 10;
 
 
 -- ==========================================================
 -- REPORT 5: CLAIMS BY PROVINCE
--- Business Question:
--- Which provinces have the highest claims expenditure?
 --
--- Business Purpose:
--- Combines customer and claims information to provide a
--- geographic management reporting view.
+-- Business question:
+-- How are recorded claims and claim values distributed
+-- across customer provinces?
+--
+-- LEFT JOIN retains claims even when customer details or
+-- province information are missing.
 -- ==========================================================
 
 SELECT
-    c.province,
+    COALESCE(c.province, 'Unknown / Missing') AS province,
     COUNT(rc.claim_id) AS total_claims,
     SUM(rc.claim_amount) AS total_claim_amount,
     ROUND(AVG(rc.claim_amount), 2) AS average_claim_amount
-FROM customers AS c
-INNER JOIN reporting_claims AS rc
+FROM reporting_claims AS rc
+LEFT JOIN customers AS c
     ON c.customer_id = rc.customer_id
-GROUP BY c.province
-ORDER BY total_claim_amount DESC;
+GROUP BY COALESCE(c.province, 'Unknown / Missing')
+ORDER BY
+    total_claim_amount DESC NULLS LAST,
+    province;
 
 
 -- ==========================================================
 -- REPORT 6: CLAIMS BY POLICY TYPE
--- Business Question:
--- Which policy types have the highest claims activity?
 --
--- Business Purpose:
--- Supports policy-level reporting by comparing claim volume
--- and financial exposure across policy types.
+-- Business question:
+-- How do recorded claim volumes and values compare across
+-- customer policy types?
+--
+-- Missing policy-type information is retained as a separate
+-- reporting category.
 -- ==========================================================
 
 SELECT
-    c.policy_type,
+    COALESCE(c.policy_type, 'Unknown / Missing') AS policy_type,
     COUNT(rc.claim_id) AS total_claims,
     SUM(rc.claim_amount) AS total_claim_amount,
     ROUND(AVG(rc.claim_amount), 2) AS average_claim_amount
-FROM customers AS c
-INNER JOIN reporting_claims AS rc
+FROM reporting_claims AS rc
+LEFT JOIN customers AS c
     ON c.customer_id = rc.customer_id
-GROUP BY c.policy_type
-ORDER BY total_claim_amount DESC;
+GROUP BY COALESCE(c.policy_type, 'Unknown / Missing')
+ORDER BY
+    total_claim_amount DESC NULLS LAST,
+    policy_type;
 
 
 -- ==========================================================
--- REPORT 7: SETTLEMENT PERFORMANCE
--- Business Question:
--- How quickly are approved claims being settled?
+-- REPORT 7: APPROVED CLAIM SETTLEMENT PERFORMANCE
 --
--- Business Purpose:
--- Supports operational reporting by measuring settlement
--- performance for approved claims.
+-- Business question:
+-- What settlement times are recorded for approved claims?
+--
+-- Claims with missing settlement days are not included in
+-- the average, minimum or maximum settlement calculations.
+-- Counts show how many approved claims have settlement data.
 -- ==========================================================
 
 SELECT
-    COUNT(claim_id) AS approved_claims,
-    ROUND(AVG(days_to_settle), 2) AS average_days_to_settle,
-    MIN(days_to_settle) AS fastest_settlement_days,
-    MAX(days_to_settle) AS longest_settlement_days
-FROM reporting_claims
-WHERE claim_status = 'Approved'
-  AND days_to_settle IS NOT NULL;
+    COUNT(*) FILTER (
+        WHERE claim_status = 'Approved'
+    ) AS total_approved_claims,
+
+    COUNT(*) FILTER (
+        WHERE claim_status = 'Approved'
+          AND days_to_settle IS NOT NULL
+    ) AS approved_claims_with_recorded_settlement,
+
+    COUNT(*) FILTER (
+        WHERE claim_status = 'Approved'
+          AND days_to_settle IS NULL
+    ) AS approved_claims_missing_settlement_days,
+
+    ROUND(
+        AVG(days_to_settle) FILTER (
+            WHERE claim_status = 'Approved'
+              AND days_to_settle IS NOT NULL
+        ),
+        2
+    ) AS average_days_to_settle,
+
+    MIN(days_to_settle) FILTER (
+        WHERE claim_status = 'Approved'
+          AND days_to_settle IS NOT NULL
+    ) AS fastest_settlement_days,
+
+    MAX(days_to_settle) FILTER (
+        WHERE claim_status = 'Approved'
+          AND days_to_settle IS NOT NULL
+    ) AS longest_settlement_days
+
+FROM reporting_claims;
 
 
 -- ==========================================================
 -- REPORT 8: CLAIMS BY INCIDENT TYPE
--- Business Question:
--- Which incident types generate the greatest financial
--- exposure?
 --
--- Business Purpose:
--- Supports incident-level reporting and helps identify
--- categories with higher claim costs.
+-- Business question:
+-- Which recorded incident types have the highest total
+-- claim value in this dataset?
+--
+-- This compares observed claim amounts; it does not measure
+-- incident probability or establish causation.
 -- ==========================================================
 
 SELECT
-    incident_type,
+    COALESCE(incident_type, 'Unknown / Missing') AS incident_type,
     COUNT(claim_id) AS total_claims,
     SUM(claim_amount) AS total_claim_amount,
     ROUND(AVG(claim_amount), 2) AS average_claim_amount
 FROM reporting_claims
-GROUP BY incident_type
-ORDER BY total_claim_amount DESC;
+GROUP BY COALESCE(incident_type, 'Unknown / Missing')
+ORDER BY
+    total_claim_amount DESC NULLS LAST,
+    incident_type;
 
 
 -- ==========================================================
 -- REPORT 9: DATA QUALITY EXCEPTIONS
--- Business Question:
--- Which claims contain missing information that could affect
--- reporting accuracy?
 --
--- Business Purpose:
--- Helps identify records requiring attention before results
--- are used for management reporting.
+-- Business question:
+-- Which claims have missing information that may affect
+-- reporting completeness or interpretation?
+--
+-- Returns one row per identified issue. A claim can appear
+-- more than once if it has multiple issues.
+--
+-- Missing settlement days are flagged here only for approved
+-- claims. Pending or rejected claims may legitimately have
+-- no recorded settlement duration.
 -- ==========================================================
 
 SELECT
-    claim_id,
-    customer_id,
-    claim_date,
-    claim_status,
-    days_to_settle,
-    CASE
-        WHEN claim_date IS NULL
-             AND days_to_settle IS NULL
-            THEN 'Missing claim date and settlement days'
+    rc.claim_id,
+    rc.customer_id,
+    rc.policy_id,
+    rc.claim_date,
+    rc.claim_amount,
+    rc.claim_status,
+    rc.days_to_settle,
+    issues.data_quality_issue
+FROM reporting_claims AS rc
+CROSS JOIN LATERAL (
+    VALUES
+        (
+            'Missing claim date',
+            rc.claim_date IS NULL
+        ),
+        (
+            'Missing customer ID',
+            rc.customer_id IS NULL
+        ),
+        (
+            'Missing policy ID',
+            rc.policy_id IS NULL
+        ),
+        (
+            'Missing claim amount',
+            rc.claim_amount IS NULL
+        ),
+        (
+            'Missing claim status',
+            rc.claim_status IS NULL
+        ),
+        (
+            'Missing settlement days for approved claim',
+            rc.claim_status = 'Approved'
+            AND rc.days_to_settle IS NULL
+        )
+) AS issues(data_quality_issue, issue_found)
+WHERE issues.issue_found
+ORDER BY
+    rc.claim_id,
+    issues.data_quality_issue;
 
-        WHEN claim_date IS NULL
-            THEN 'Missing claim date'
-
-        WHEN days_to_settle IS NULL
-            THEN 'Missing settlement days'
-
-        ELSE 'No identified issue'
-    END AS data_quality_issue
-FROM reporting_claims
-WHERE claim_date IS NULL
-   OR days_to_settle IS NULL
-ORDER BY claim_id;
 
