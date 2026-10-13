@@ -1,74 +1,89 @@
-- Insurance Claims SQL Reporting Project
 
-- Project Overview
+-- ============================================================
+-- INSURANCE CLAIMS REPORTING VIEW
+-- Database: PostgreSQL
+-- Source tables: customers, claims_raw
+--
+-- Purpose:
+-- Prepare claims and customer attributes for SQL reporting.
+-- Preserve missing source values for data-quality checks.
+-- ============================================================
 
-This project demonstrates how I used PostgreSQL and SQL to analyse a simulated insurance claims dataset from a business reporting perspective.
+CREATE OR REPLACE VIEW reporting_claims_vw AS
+SELECT
+    cl.claim_id,
+    cl.customer_id,
+    c.first_name,
+    c.last_name,
+    c.age,
+    c.city AS customer_city,
+    c.province,
+    c.policy_start_date,
+    c.policy_type,
 
-The project focuses on relational database design, data validation, SQL analysis, KPI reporting, trend analysis, and preparation of reporting-ready datasets.
+    cl.policy_id,
+    cl.claim_date,
+    cl.claim_type,
+    cl.claim_amount,
+    cl.claim_status,
+    cl.incident_city,
+    cl.incident_type,
+    cl.police_report,
+    cl.days_to_settle,
 
-The goal is to demonstrate how structured claims data can be transformed into useful information for operational reporting and business decision support.
+    EXTRACT(YEAR FROM cl.claim_date)::INT AS claim_year,
+    EXTRACT(MONTH FROM cl.claim_date)::INT AS claim_month,
+    TO_CHAR(cl.claim_date, 'FMMonth') AS claim_month_name,
 
----
+    CASE
+        WHEN cl.claim_amount IS NULL THEN 'Not Classified'
+        WHEN cl.claim_amount < 10000 THEN 'Low'
+        WHEN cl.claim_amount <= 20000 THEN 'Medium'
+        ELSE 'High'
+    END AS claim_severity,
 
-- Business Scenario
+    CASE
+        WHEN cl.days_to_settle IS NULL THEN 'Missing Settlement Days'
+        WHEN cl.days_to_settle <= 10 THEN '0-10 Days'
+        WHEN cl.days_to_settle <= 20 THEN '11-20 Days'
+        ELSE '21+ Days'
+    END AS settlement_group
 
-Insurance companies process large volumes of claims data. Accurate reporting helps teams monitor claim activity, understand claim costs, identify trends, and review operational performance.
+FROM claims_raw AS cl
+LEFT JOIN customers AS c
+    ON cl.customer_id = c.customer_id;
 
-This project simulates a claims reporting workflow in which raw customer and claims data is organised in PostgreSQL and analysed using SQL.
 
-The analysis focuses on practical reporting questions rather than making unsupported fraud or risk predictions.
+**Check the view**
 
----
 
-- Project Objectives
+-- 1. Confirm the view returns claim records.
+SELECT *
+FROM reporting_claims_vw
+ORDER BY claim_id;
 
-- Build a relational database using PostgreSQL
-- Organise customer and claims data into related tables
-- Apply primary and foreign key relationships
-- Validate and prepare data for reporting
-- Use SQL to answer business questions
-- Calculate claims KPIs and summary metrics
-- Analyse claims trends and patterns
-- Create reporting-ready datasets
-- Produce operational exception reports
-- Demonstrate how SQL supports business reporting
+-- 2. Check the number of records in the view.
+SELECT COUNT(*) AS reporting_claim_count
+FROM reporting_claims_vw;
 
----
+-- 3. Check missing values that affect reporting.
+SELECT
+    COUNT(*) FILTER (
+        WHERE claim_date IS NULL
+    ) AS missing_claim_dates,
 
-- Dataset
+    COUNT(*) FILTER (
+        WHERE claim_amount IS NULL
+    ) AS missing_claim_amounts,
 
-| Item | Description |
-|---|---|
-| Dataset Type | Simulated Insurance Claims Dataset |
-| Database | PostgreSQL |
-| Customer Records | 20 |
-| Claim Records | 20 |
-| Main Customer Data | Customer ID, name, gender, age, city, province, policy start date, policy type |
-| Main Claims Data | Claim ID, customer ID, policy ID, claim date, claim type, claim amount, claim status, incident city, incident type, police report, days to settle |
+    COUNT(*) FILTER (
+        WHERE customer_id IS NULL
+    ) AS missing_customer_ids,
 
----
+    COUNT(*) FILTER (
+        WHERE days_to_settle IS NULL
+    ) AS missing_settlement_days
 
-- Project Structure
+FROM reporting_claims_vw;
 
-```text
-SQL-Insurance-Claims-Analysis/
-│
-├── 01-Data/
-│   ├── customers_raw.csv
-│   └── claims_raw.csv
-│
-├── 02-Database-Schema/
-│   └── schema_design.sql
-│
-├── 03-SQL/
-│   ├── SQL analysis queries
-│   ├── reporting queries
-│   ├── exception monitoring queries
-│   └── report export queries
-│
-├── 04-Scripts/
-│   └── insurance_claims_postgresql_pipeline.sql
-│
-└── 05-Docs/
-    └── README.md
 
