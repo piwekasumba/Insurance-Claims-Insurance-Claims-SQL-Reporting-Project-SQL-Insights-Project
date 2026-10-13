@@ -1,21 +1,22 @@
-claim_id,customer_id,policy_id,claim_date,claim_type,claim_amount,claim_status,incident_city,incident_type,police_report,days_to_settle
-1001,C001,P10001,2024-01-05,Accident,15000,Approved,Johannesburg,Vehicle Collision,Yes,12
-1002,C002,P10002,2024-01-10,Theft,8000,Rejected,Pretoria,Car Theft,Yes,NULL
-1003,C003,P10003,2024-01-12,Fire,25000,Approved,Durban,House Fire,Yes,20
-1004,C004,P10004,2024-01-15,Flood,12000,Pending,Cape Town,Flood Damage,No,NULL
-1005,C005,P10005,2024-01-18,Accident,5000,Approved,Johannesburg,Minor Collision,Yes,5
-1006,C006,P10006,NULL,Theft,7000,Rejected,Polokwane,Burglary,No,NULL
-1007,C007,P10007,2024-01-22,Accident,18000,Approved,Nelspruit,Vehicle Collision,Yes,15
-1008,C008,P10008,2024-01-25,Fire,30000,Approved,Bloemfontein,Warehouse Fire,Yes,25
-1009,C009,P10009,2024-01-28,Flood,9000,Pending,Port Elizabeth,Storm Flood,No,NULL
-1010,C010,P10010,2024-02-01,Theft,11000,Approved,Johannesburg,Car Theft,Yes,10
-1011,C011,P10011,2024-02-03,Accident,4000,Rejected,Pretoria,Minor Collision,No,NULL
-1012,C012,P10012,2024-02-05,Fire,22000,Approved,Durban,House Fire,Yes,18
-1013,C013,P10013,2024-02-07,Flood,13000,Pending,Cape Town,Flood Damage,No,NULL
-1014,C014,P10014,NULL,Accident,16000,Approved,Johannesburg,Vehicle Collision,Yes,14
-1015,C015,P10015,2024-02-10,Theft,6000,Rejected,Polokwane,Burglary,No,NULL
-1016,C016,P10016,2024-02-12,Fire,27000,Approved,Bloemfontein,Factory Fire,Yes,22
-1017,C017,P10017,2024-02-14,Flood,10000,Pending,Port Elizabeth,Storm Flood,No,NULL
-1018,C018,P10018,2024-02-16,Accident,14000,Approved,Nelspruit,Vehicle Collision,Yes,11
-1019,C019,P10019,2024-02-18,Theft,9000,Rejected,Pretoria,Car Theft,Yes,NULL
-1020,C020,P10020,2024-02-20,Fire,31000,Approved,Durban,Warehouse Fire,Yes,26
+| claim_id | customer_id | policy_id | claim_date | claim_type | claim_amount | claim_status | incident_city | incident_type | police_report | days_to_settle |
+|---:|---|---|---|---|---:|---|---|---|---|---:|
+| 1001 | C001 | P10001 | 2024-01-05 | Accident | 15000 | Approved | Johannesburg | Vehicle Collision | Yes | 12 |
+| 1002 | C002 | P10002 | 2024-01-10 | Theft | 8000 | Rejected | Pretoria | Car Theft | Yes | NULL |
+| 1003 | C003 | P10003 | 2024-01-12 | Fire | 25000 | Approved | Durban | House Fire | Yes | 20 |
+| 1004 | C004 | P10004 | 2024-01-15 | Flood | 12000 | Pending | Cape Town | Flood Damage | No | NULL |
+| 1005 | C005 | P10005 | 2024-01-18 | Accident | 5000 | Approved | Johannesburg | Minor Collision | Yes | 5 |
+| 1006 | C006 | P10006 | NULL | Theft | 7000 | Rejected | Polokwane | Burglary | No | NULL |
+| 1007 | C007 | P10007 | 2024-01-22 | Accident | 18000 | Approved | Nelspruit | Vehicle Collision | Yes | 15 |
+| 1008 | C008 | P10008 | 2024-01-25 | Fire | 30000 | Approved | Bloemfontein | Warehouse Fire | Yes | 25 |
+| 1009 | C009 | P10009 | 2024-01-28 | Flood | 9000 | Pending | Port Elizabeth | Storm Flood | No | NULL |
+| 1010 | C010 | P10010 | 2024-02-01 | Theft | 11000 | Approved | Johannesburg | Car Theft | Yes | 10 |
+| 1011 | C011 | P10011 | 2024-02-03 | Accident | 4000 | Rejected | Pretoria | Minor Collision | No | NULL |
+| 1012 | C012 | P10012 | 2024-02-05 | Fire | 22000 | Approved | Durban | House Fire | Yes | 18 |
+| 1013 | C013 | P10013 | 2024-02-07 | Flood | 13000 | Pending | Cape Town | Flood Damage | No | NULL |
+| 1014 | C014 | P10014 | NULL | Accident | 16000 | Approved | Johannesburg | Vehicle Collision | Yes | 14 |
+| 1015 | C015 | P10015 | 2024-02-10 | Theft | 6000 | Rejected | Polokwane | Burglary | No | NULL |
+| 1016 | C016 | P10016 | 2024-02-12 | Fire | 27000 | Approved | Bloemfontein | Factory Fire | Yes | 22 |
+| 1017 | C017 | P10017 | 2024-02-14 | Flood | 10000 | Pending | Port Elizabeth | Storm Flood | No | NULL |
+| 1018 | C018 | P10018 | 2024-02-16 | Accident | 14000 | Approved | Nelspruit | Vehicle Collision | Yes | 11 |
+| 1019 | C019 | P10019 | 2024-02-18 | Theft | 9000 | Rejected | Pretoria | Car Theft | Yes | NULL |
+| 1020 | C020 | P10020 | 2024-02-20 | Fire | 31000 | Approved | Durban | Warehouse Fire | Yes | 26 |
