@@ -1,28 +1,30 @@
+
 -- ==========================================================
 -- INSURANCE CLAIMS EXCEPTION & MONITORING REPORTS
 -- PostgreSQL
 --
 -- Purpose:
--- Produce exception and monitoring reports that support
--- operational review, claims monitoring and business analysis.
+-- Produce exception and monitoring reports for operational
+-- review, claims monitoring and data-quality follow-up.
 --
--- These reports use the reporting_claims and
--- customer_claim_summary reporting tables.
+-- Required reporting tables:
+-- 1. reporting_claims
+-- 2. customer_claim_summary
+--
+-- Note:
+-- These reports flag records for review. They do not prove
+-- fraud, customer risk or overdue claims.
 -- ==========================================================
 
 
 -- ==========================================================
--- REPORT 1: HIGH CLAIM ACTIVITY CUSTOMERS
+-- REPORT 1: CUSTOMERS WITH MULTIPLE CLAIMS
 -- ==========================================================
 -- Business Question:
--- Which customers submitted more than one claim?
+-- Which customers have submitted more than one recorded claim?
 --
 -- Business Purpose:
--- Supports operational reporting by identifying customers
--- with multiple claims for further review.
---
--- Reporting Output:
--- Ranked customer claims activity summary.
+-- Supports operational monitoring of claims activity.
 -- ==========================================================
 
 SELECT
@@ -38,27 +40,25 @@ FROM customer_claim_summary
 WHERE total_claims > 1
 ORDER BY
     total_claims DESC,
-    total_claim_amount DESC;
+    total_claim_amount DESC,
+    customer_id;
 
 
 -- ==========================================================
--- REPORT 2: HIGH-VALUE CLAIM EXCEPTIONS
+-- REPORT 2: CLAIMS ABOVE THE OVERALL AVERAGE
 -- ==========================================================
 -- Business Question:
--- Which claims are above the overall average claim value?
+-- Which recorded claims exceed the overall average claim amount?
 --
 -- Business Purpose:
--- Helps claims teams identify higher-value claims that may
--- require additional review.
---
--- Reporting Output:
--- Ranked high-value claim exception report.
+-- Identifies higher-value claims for possible further review.
 -- ==========================================================
 
 WITH claim_statistics AS (
     SELECT
         AVG(claim_amount) AS average_claim_amount
     FROM reporting_claims
+    WHERE claim_amount IS NOT NULL
 )
 
 SELECT
@@ -69,32 +69,36 @@ SELECT
     rc.claim_type,
     rc.claim_amount,
     rc.claim_status,
-    rc.incident_city
+    rc.incident_city,
+    ROUND(cs.average_claim_amount, 2) AS overall_average_claim_amount
 FROM reporting_claims AS rc
 CROSS JOIN claim_statistics AS cs
 WHERE rc.claim_amount > cs.average_claim_amount
 ORDER BY
-    rc.claim_amount DESC;
+    rc.claim_amount DESC,
+    rc.claim_id;
 
 
 -- ==========================================================
--- REPORT 3: HIGH-SEVERITY CLAIM MONITORING
+-- REPORT 3: HIGH-SEVERITY CLAIM MONITORING BY POLICY
 -- ==========================================================
 -- Business Question:
--- Which policies have high-severity claims?
+-- Which policy identifiers are associated with high-severity
+-- claims under this project's claim-amount classification?
+--
+-- Severity definition:
+-- Low:    below 10,000
+-- Medium: 10,000 through 20,000
+-- High:   above 20,000
 --
 -- Business Purpose:
--- Supports operational monitoring by identifying policies
--- associated with higher-value claims.
---
--- Reporting Output:
--- Policy-level high-severity claim summary.
+-- Summarises higher-value claims for operational review.
 -- ==========================================================
 
 SELECT
     policy_id,
     COUNT(*) AS high_severity_claims,
-    SUM(claim_amount) AS total_claim_cost,
+    SUM(claim_amount) AS total_claim_amount,
     ROUND(AVG(claim_amount), 2) AS average_claim_amount,
     MIN(claim_date) AS first_claim_date,
     MAX(claim_date) AS latest_claim_date
@@ -102,29 +106,31 @@ FROM reporting_claims
 WHERE claim_severity = 'High'
 GROUP BY policy_id
 ORDER BY
-    total_claim_cost DESC;
+    total_claim_amount DESC,
+    policy_id NULLS LAST;
 
 
 -- ==========================================================
--- REPORT 4: CUSTOMERS REQUIRING BUSINESS REVIEW
+-- REPORT 4: CUSTOMERS FLAGGED FOR BUSINESS REVIEW
 -- ==========================================================
 -- Business Question:
--- Which customers have multiple claims and a total claim
--- value above the overall average customer claim value?
+-- Which customers have multiple claims and a total recorded
+-- claim amount above the average customer total?
 --
--- Business Purpose:
--- Produces a simple exception report for operational review.
+-- Calculation:
+-- The comparison average is calculated across customers with
+-- at least one recorded claim in customer_claim_summary.
 --
 -- Important:
--- This report identifies records for review. It does not
--- determine fraud or customer risk.
+-- This is a monitoring rule, not a fraud or risk assessment.
 -- ==========================================================
 
 WITH customer_statistics AS (
     SELECT
-        AVG(total_claim_amount) AS average_customer_claim_amount
+        AVG(total_claim_amount) AS average_customer_total
     FROM customer_claim_summary
     WHERE total_claims > 0
+      AND total_claim_amount IS NOT NULL
 )
 
 SELECT
@@ -135,27 +141,29 @@ SELECT
     ccs.policy_type,
     ccs.total_claims,
     ccs.total_claim_amount,
-    ccs.average_claim_amount
+    ccs.average_claim_amount,
+    ROUND(cs.average_customer_total, 2) AS average_customer_total
 FROM customer_claim_summary AS ccs
 CROSS JOIN customer_statistics AS cs
 WHERE ccs.total_claims > 1
-  AND ccs.total_claim_amount > cs.average_customer_claim_amount
+  AND ccs.total_claim_amount > cs.average_customer_total
 ORDER BY
-    ccs.total_claim_amount DESC;
+    ccs.total_claim_amount DESC,
+    ccs.customer_id;
 
 
 -- ==========================================================
--- REPORT 5: UNSETTLED CLAIMS MONITORING
+-- REPORT 5: CLAIMS MISSING SETTLEMENT-DURATION INFORMATION
 -- ==========================================================
 -- Business Question:
--- Which claims do not yet have settlement information?
+-- Which claims have no recorded settlement duration?
 --
 -- Business Purpose:
--- Supports operational monitoring by identifying claims
--- that may require follow-up.
+-- Supports data-quality and operational follow-up.
 --
--- Reporting Output:
--- Claims without settlement duration.
+-- Important:
+-- A missing duration does not by itself prove that a claim
+-- is unsettled or overdue.
 -- ==========================================================
 
 SELECT
@@ -166,7 +174,8 @@ SELECT
     claim_type,
     claim_amount,
     claim_status,
-    incident_city
+    incident_city,
+    days_to_settle
 FROM reporting_claims
 WHERE days_to_settle IS NULL
 ORDER BY
@@ -175,17 +184,14 @@ ORDER BY
 
 
 -- ==========================================================
--- REPORT 6: MISSING CLAIM DATE EXCEPTIONS
+-- REPORT 6: CLAIMS MISSING A CLAIM DATE
 -- ==========================================================
 -- Business Question:
--- Which claims are missing a claim date?
+-- Which claims have no recorded claim date?
 --
 -- Business Purpose:
--- Supports data quality monitoring because missing dates
--- can affect time-based reporting and trend analysis.
---
--- Reporting Output:
--- Claims requiring data quality attention.
+-- Identifies data-quality exceptions that can affect
+-- time-based reporting and monthly trend analysis.
 -- ==========================================================
 
 SELECT
@@ -199,3 +205,4 @@ SELECT
 FROM reporting_claims
 WHERE claim_date IS NULL
 ORDER BY claim_id;
+
