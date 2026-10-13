@@ -1,125 +1,95 @@
+
 -- ===========================================================
--- INSURANCE CLAIMS RISK ANALYTICS DATABASE
+-- INSURANCE CLAIMS REPORTING DATABASE
 -- PostgreSQL Relational Database Schema
 --
 -- Purpose:
--- Create the core database structure used for insurance claims
--- reporting and analysis.
+-- Create the core tables for the simulated claims project.
 --
--- The schema demonstrates:
--- • Relational database design
--- • Primary and foreign keys
--- • Data validation constraints
--- • Lookup tables
--- • Default values
--- • Indexes for common reporting queries
+-- Tables:
+-- 1. customers
+-- 2. claims_raw
+--
+-- The raw claims table preserves source values for validation.
 -- ===========================================================
 
 
 -- ===========================================================
 -- CUSTOMERS
--- Stores customer information used for claims reporting.
+-- Matches the 20-record customer dataset.
 -- ===========================================================
 
 CREATE TABLE customers (
-    customer_id SERIAL PRIMARY KEY,
+    customer_id VARCHAR(10) PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    date_of_birth DATE,
     gender VARCHAR(10)
         CHECK (gender IN ('Male', 'Female')),
-    email VARCHAR(100) UNIQUE,
-    phone_number VARCHAR(20),
-    address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    age INT
+        CHECK (age > 0),
+    city VARCHAR(100),
+    province VARCHAR(100),
+    policy_start_date DATE,
+    policy_type VARCHAR(50)
 );
 
 
 -- ===========================================================
--- CLAIM STATUS LOOKUP
--- Standardises claim statuses for consistent reporting.
+-- RAW CLAIMS
+-- Matches the 20-record claims dataset.
+--
+-- Nullable fields allow incomplete source records to be
+-- retained and identified during data-quality checks.
 -- ===========================================================
 
-CREATE TABLE claim_status_lookup (
-    status_id SERIAL PRIMARY KEY,
-    status_name VARCHAR(20) UNIQUE NOT NULL
-);
-
-
--- Insert the standard claim statuses used by the project.
-
-INSERT INTO claim_status_lookup (status_name)
-VALUES
-    ('Pending'),
-    ('Approved'),
-    ('Rejected'),
-    ('Under Review');
-
-
--- ===========================================================
--- CLAIMS
--- Stores insurance claim transactions linked to customers.
--- ===========================================================
-
-CREATE TABLE claims (
-    claim_id SERIAL PRIMARY KEY,
-
-    customer_id INT NOT NULL
+CREATE TABLE claims_raw (
+    claim_id INT PRIMARY KEY,
+    customer_id VARCHAR(10)
         REFERENCES customers(customer_id),
-
-    policy_number VARCHAR(50) NOT NULL,
-
-    claim_date DATE NOT NULL,
-
-    processed_date DATE,
-
-    claim_amount NUMERIC(12,2) NOT NULL
-        CHECK (claim_amount > 0),
-
-    status_id INT NOT NULL
-        DEFAULT 1
-        REFERENCES claim_status_lookup(status_id),
-
+    policy_id VARCHAR(20),
+    claim_date DATE,
     claim_type VARCHAR(50),
-
-    description TEXT,
-
-    processed_by VARCHAR(50),
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    claim_amount NUMERIC(12,2)
+        CHECK (claim_amount > 0),
+    claim_status VARCHAR(20)
+        CHECK (
+            claim_status IN (
+                'Pending',
+                'Approved',
+                'Rejected',
+                'Under Review'
+            )
+            OR claim_status IS NULL
+        ),
+    incident_city VARCHAR(100),
+    incident_type VARCHAR(100),
+    police_report VARCHAR(10)
+        CHECK (
+            police_report IN ('Yes', 'No')
+            OR police_report IS NULL
+        ),
+    days_to_settle INT
+        CHECK (days_to_settle >= 0)
 );
 
 
 -- ===========================================================
 -- INDEXES
--- Support common reporting and filtering queries.
+-- Support common joins and reporting filters.
 -- ===========================================================
 
--- Supports policy-level analysis.
+CREATE INDEX idx_claims_raw_customer
+    ON claims_raw(customer_id);
 
-CREATE INDEX idx_claims_policy_number
-ON claims(policy_number);
+CREATE INDEX idx_claims_raw_policy
+    ON claims_raw(policy_id);
 
+CREATE INDEX idx_claims_raw_date
+    ON claims_raw(claim_date);
 
--- Supports customer-to-claims joins.
-
-CREATE INDEX idx_claims_customer
-ON claims(customer_id);
-
-
--- Supports date-based claims reporting.
-
-CREATE INDEX idx_claims_claim_date
-ON claims(claim_date);
-
-
--- Supports reporting by claim status.
-
-CREATE INDEX idx_claims_status
-ON claims(status_id);
-
-
--- Supports customer searches by surname.
+CREATE INDEX idx_claims_raw_status
+    ON claims_raw(claim_status);
 
 CREATE INDEX idx_customers_last_name
-ON customers(last_name);
+    ON customers(last_name);
+
