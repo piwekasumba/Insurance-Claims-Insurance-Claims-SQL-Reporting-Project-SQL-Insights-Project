@@ -1,21 +1,22 @@
-customer_id,first_name,last_name,gender,age,city,province,policy_start_date,policy_type
-C001,Thabo,Mokoena,Male,34,Johannesburg,Gauteng,2022-05-10,Comprehensive
-C002,Lerato,Khumalo,Female,29,Pretoria,Gauteng,2023-01-15,Third Party
-C003,Sipho,Dlamini,Male,41,Durban,Kwazulu-Natal,2021-11-20,Comprehensive
-C004,Ayanda,Ndlovu,Female,37,Cape Town,Western Cape,2022-07-01,Home Insurance
-C005,Neo,Seema,Male,26,Johannesburg,Gauteng,2023-03-12,Third Party
-C006,Zanele,Mthembu,Female,45,Polokwane,Limpopo,2020-09-05,Home Insurance
-C007,Kabelo,Moloi,Male,33,Nelspruit,Mpumalanga,2022-02-14,Comprehensive
-C008,Boitumelo,Radebe,Female,38,Bloemfontein,Free State,2021-08-19,Commercial
-C009,Andile,Zulu,Male,30,Port Elizabeth,Eastern Cape,2023-04-10,Third Party
-C010,Naledi,Mokoena,Female,27,Johannesburg,Gauteng,2023-06-25,Comprehensive
-C011,Tshepo,Khumalo,Male,36,Pretoria,Gauteng,2022-10-30,Third Party
-C012,Nomsa,Dlamini,Female,42,Durban,Kwazulu-Natal,2021-12-11,Home Insurance
-C013,Lunga,Ndlovu,Male,31,Cape Town,Western Cape,2022-09-08,Comprehensive
-C014,Refilwe,Seema,Female,35,Johannesburg,Gauteng,2023-02-17,Comprehensive
-C015,Peter,Mthembu,Male,48,Polokwane,Limpopo,2020-06-22,Home Insurance
-C016,Karabo,Moloi,Female,39,Bloemfontein,Free State,2021-05-14,Commercial
-C017,Sibusiso,Zulu,Male,28,Port Elizabeth,Eastern Cape,2023-07-01,Third Party
-C018,Tshegofatso,Radebe,Female,32,Nelspruit,Mpumalanga,2022-11-09,Comprehensive
-C019,Bongani,Khumalo,Male,44,Pretoria,Gauteng,2021-03-03,Comprehensive
-C020,Amanda,Dlamini,Female,40,Durban,Kwazulu-Natal,2021-01-25,Commercial
+| customer_id | first_name  | last_name | gender | age | city           | province      | policy_start_date | policy_type    |
+|-------------|-------------|-----------|--------|----:|----------------|---------------|-------------------|----------------|
+| C001        | Thabo       | Mokoena   | Male   | 34  | Johannesburg   | Gauteng       | 2022-05-10        | Comprehensive  |
+| C002        | Lerato      | Khumalo   | Female | 29  | Pretoria       | Gauteng       | 2023-01-15        | Third Party    |
+| C003        | Sipho       | Dlamini   | Male   | 41  | Durban         | Kwazulu-Natal | 2021-11-20        | Comprehensive  |
+| C004        | Ayanda      | Ndlovu    | Female | 37  | Cape Town      | Western Cape  | 2022-07-01        | Home Insurance |
+| C005        | Neo         | Seema     | Male   | 26  | Johannesburg   | Gauteng       | 2023-03-12        | Third Party    |
+| C006        | Zanele      | Mthembu   | Female | 45  | Polokwane      | Limpopo       | 2020-09-05        | Home Insurance |
+| C007        | Kabelo      | Moloi     | Male   | 33  | Nelspruit      | Mpumalanga    | 2022-02-14        | Comprehensive  |
+| C008        | Boitumelo   | Radebe    | Female | 38  | Bloemfontein   | Free State    | 2021-08-19        | Commercial     |
+| C009        | Andile      | Zulu      | Male   | 30  | Port Elizabeth | Eastern Cape  | 2023-04-10        | Third Party    |
+| C010        | Naledi      | Mokoena   | Female | 27  | Johannesburg   | Gauteng       | 2023-06-25        | Comprehensive  |
+| C011        | Tshepo      | Khumalo   | Male   | 36  | Pretoria       | Gauteng       | 2022-10-30        | Third Party    |
+| C012        | Nomsa       | Dlamini   | Female | 42  | Durban         | Kwazulu-Natal | 2021-12-11        | Home Insurance |
+| C013        | Lunga       | Ndlovu    | Male   | 31  | Cape Town      | Western Cape  | 2022-09-08        | Comprehensive  |
+| C014        | Refilwe     | Seema     | Female | 35  | Johannesburg   | Gauteng       | 2023-02-17        | Comprehensive  |
+| C015        | Peter       | Mthembu   | Male   | 48  | Polokwane      | Limpopo       | 2020-06-22        | Home Insurance |
+| C016        | Karabo      | Moloi     | Female | 39  | Bloemfontein   | Free State    | 2021-05-14        | Commercial     |
+| C017        | Sibusiso    | Zulu      | Male   | 28  | Port Elizabeth | Eastern Cape  | 2023-07-01        | Third Party    |
+| C018        | Tshegofatso | Radebe    | Female | 32  | Nelspruit      | Mpumalanga    | 2022-11-09        | Comprehensive  |
+| C019        | Bongani     | Khumalo   | Male   | 44  | Pretoria       | Gauteng       | 2021-03-03        | Comprehensive  |
+| C020        | Amanda      | Dlamini   | Female | 40  | Durban         | Kwazulu-Natal | 2021-01-25        | Commercial     |
