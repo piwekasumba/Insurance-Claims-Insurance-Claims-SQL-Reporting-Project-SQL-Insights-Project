@@ -3,17 +3,26 @@
 -- INSURANCE CLAIMS EXCEPTION & MONITORING REPORTS
 -- PostgreSQL
 --
+-- Project: Insurance Claims SQL Reporting
+--
 -- Purpose:
--- Produce exception and monitoring reports for operational
--- review, claims monitoring and data-quality follow-up.
+-- Produce SQL-based exception and monitoring reports to
+-- support operational review, claims monitoring and
+-- data-quality follow-up.
 --
 -- Required reporting tables:
 -- 1. reporting_claims
 -- 2. customer_claim_summary
 --
--- Note:
--- These reports flag records for review. They do not prove
--- fraud, customer risk or overdue claims.
+-- Reporting principles:
+-- - Use clearly defined reporting conditions.
+-- - Make comparison populations transparent.
+-- - Identify missing information for review.
+-- - Avoid interpreting monitoring flags as proof of fraud,
+--   customer risk or overdue claims.
+--
+-- Data context:
+-- Simulated insurance claims data for portfolio purposes.
 -- ==========================================================
 
 
@@ -24,7 +33,10 @@
 -- Which customers have submitted more than one recorded claim?
 --
 -- Business Purpose:
--- Supports operational monitoring of claims activity.
+-- Supports monitoring of repeated claims activity.
+--
+-- Reporting Rule:
+-- Include customers with more than one recorded claim.
 -- ==========================================================
 
 SELECT
@@ -40,7 +52,7 @@ FROM customer_claim_summary
 WHERE total_claims > 1
 ORDER BY
     total_claims DESC,
-    total_claim_amount DESC,
+    total_claim_amount DESC NULLS LAST,
     customer_id;
 
 
@@ -48,10 +60,15 @@ ORDER BY
 -- REPORT 2: CLAIMS ABOVE THE OVERALL AVERAGE
 -- ==========================================================
 -- Business Question:
--- Which recorded claims exceed the overall average claim amount?
+-- Which recorded claims exceed the overall average
+-- recorded claim amount?
 --
 -- Business Purpose:
 -- Identifies higher-value claims for possible further review.
+--
+-- Calculation:
+-- The benchmark is the average of non-NULL claim amounts
+-- across all records in reporting_claims.
 -- ==========================================================
 
 WITH claim_statistics AS (
@@ -70,10 +87,12 @@ SELECT
     rc.claim_amount,
     rc.claim_status,
     rc.incident_city,
-    ROUND(cs.average_claim_amount, 2) AS overall_average_claim_amount
+    ROUND(cs.average_claim_amount, 2)
+        AS overall_average_claim_amount
 FROM reporting_claims AS rc
 CROSS JOIN claim_statistics AS cs
-WHERE rc.claim_amount > cs.average_claim_amount
+WHERE rc.claim_amount IS NOT NULL
+  AND rc.claim_amount > cs.average_claim_amount
 ORDER BY
     rc.claim_amount DESC,
     rc.claim_id;
@@ -86,13 +105,18 @@ ORDER BY
 -- Which policy identifiers are associated with high-severity
 -- claims under this project's claim-amount classification?
 --
--- Severity definition:
+-- Project Severity Classification:
 -- Low:    below 10,000
 -- Medium: 10,000 through 20,000
 -- High:   above 20,000
 --
 -- Business Purpose:
--- Summarises higher-value claims for operational review.
+-- Summarises higher-value claims by policy for
+-- operational monitoring and further review.
+--
+-- Important:
+-- Severity is a project-defined claim-amount classification.
+-- It is not an independently established risk assessment.
 -- ==========================================================
 
 SELECT
@@ -104,7 +128,9 @@ SELECT
     MAX(claim_date) AS latest_claim_date
 FROM reporting_claims
 WHERE claim_severity = 'High'
-GROUP BY policy_id
+  AND claim_amount > 20000
+GROUP BY
+    policy_id
 ORDER BY
     total_claim_amount DESC,
     policy_id NULLS LAST;
@@ -118,16 +144,22 @@ ORDER BY
 -- claim amount above the average customer total?
 --
 -- Calculation:
--- The comparison average is calculated across customers with
--- at least one recorded claim in customer_claim_summary.
+-- The benchmark is calculated across customers who:
+-- 1. Have at least one recorded claim.
+-- 2. Have a non-NULL total claim amount.
+--
+-- Business Purpose:
+-- Identifies customers meeting both monitoring conditions.
 --
 -- Important:
--- This is a monitoring rule, not a fraud or risk assessment.
+-- This is a project-defined monitoring rule.
+-- It does not establish fraud or customer risk.
 -- ==========================================================
 
 WITH customer_statistics AS (
     SELECT
-        AVG(total_claim_amount) AS average_customer_total
+        AVG(total_claim_amount) AS average_customer_total,
+        COUNT(*) AS benchmark_customer_count
     FROM customer_claim_summary
     WHERE total_claims > 0
       AND total_claim_amount IS NOT NULL
@@ -142,10 +174,13 @@ SELECT
     ccs.total_claims,
     ccs.total_claim_amount,
     ccs.average_claim_amount,
-    ROUND(cs.average_customer_total, 2) AS average_customer_total
+    ROUND(cs.average_customer_total, 2)
+        AS average_customer_total,
+    cs.benchmark_customer_count
 FROM customer_claim_summary AS ccs
 CROSS JOIN customer_statistics AS cs
 WHERE ccs.total_claims > 1
+  AND ccs.total_claim_amount IS NOT NULL
   AND ccs.total_claim_amount > cs.average_customer_total
 ORDER BY
     ccs.total_claim_amount DESC,
@@ -159,11 +194,12 @@ ORDER BY
 -- Which claims have no recorded settlement duration?
 --
 -- Business Purpose:
--- Supports data-quality and operational follow-up.
+-- Identifies missing settlement-duration information
+-- for data-quality and operational follow-up.
 --
 -- Important:
--- A missing duration does not by itself prove that a claim
--- is unsettled or overdue.
+-- A NULL settlement duration does not independently prove
+-- that a claim is unsettled or overdue.
 -- ==========================================================
 
 SELECT
@@ -190,8 +226,12 @@ ORDER BY
 -- Which claims have no recorded claim date?
 --
 -- Business Purpose:
--- Identifies data-quality exceptions that can affect
+-- Identifies missing date information that can affect
 -- time-based reporting and monthly trend analysis.
+--
+-- Data-quality consideration:
+-- Missing claim dates should be investigated before
+-- relying on time-based reporting results.
 -- ==========================================================
 
 SELECT
@@ -204,5 +244,7 @@ SELECT
     incident_city
 FROM reporting_claims
 WHERE claim_date IS NULL
-ORDER BY claim_id;
+ORDER BY
+    claim_id;
+
 
