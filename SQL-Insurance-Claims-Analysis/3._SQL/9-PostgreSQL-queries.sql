@@ -4,23 +4,30 @@
 -- PostgreSQL
 --
 -- Purpose:
--- Export prepared reporting datasets and business review
--- outputs as CSV files for further analysis.
+-- Export prepared reporting datasets, business review
+-- outputs and data quality exceptions as CSV files.
 --
--- Prerequisites:
--- 1. Customer and claims data have been loaded.
--- 2. The reporting workflow has completed successfully.
--- 3. The reporting tables referenced below exist.
--- 4. The destination directory exists on the PostgreSQL
---    SERVER and is writable by the PostgreSQL service.
+-- EXECUTION PREREQUISITES:
+-- 1. Customer and claims source data have been loaded.
+-- 2. The ETL and reporting preparation workflow has completed.
+-- 3. The following reporting tables exist:
+--      claims_reporting
+--      customer_claim_summary
+--      policy_claim_summary
+--      claims_status_summary
+--      claims_type_summary
+-- 4. The destination reports directory already exists.
+-- 5. PostgreSQL has permission to write to the destination.
 --
--- Important:
--- COPY TO writes files on the database server, not directly
--- into this GitHub repository or your local project folder.
+-- IMPORTANT:
+-- COPY TO writes files to the DATABASE SERVER filesystem.
+-- It does not automatically save files into this SQL script's
+-- directory or the GitHub repository.
 --
--- Replace the example relative paths below with absolute
--- server-side paths if required by your environment.
--- PostgreSQL must also have permission to write to the path.
+-- Replace the example directory in every export path below
+-- with the actual absolute path to your reports directory.
+--
+-- Forward slashes are supported in Windows PostgreSQL paths.
 -- ==========================================================
 
 
@@ -28,12 +35,12 @@
 -- EXPORT 1: REPORTING CLAIMS DATASET
 -- ==========================================================
 -- Purpose:
--- Provide the prepared claims dataset for operational
--- reporting and further analysis.
+-- Export the prepared claims reporting dataset, including
+-- reporting attributes derived during ETL preparation.
 -- ==========================================================
 
-COPY reporting_claims
-TO 'reports/reporting_claims.csv'
+COPY claims_reporting
+TO 'C:/REPLACE_WITH_PROJECT_PATH/reports/reporting_claims.csv'
 WITH (FORMAT CSV, HEADER TRUE);
 
 
@@ -41,12 +48,12 @@ WITH (FORMAT CSV, HEADER TRUE);
 -- EXPORT 2: CUSTOMER CLAIM SUMMARY
 -- ==========================================================
 -- Purpose:
--- Summarise claim volumes and recorded claim amounts
--- by customer.
+-- Export customer-level claim metrics for reporting and
+-- further analysis.
 -- ==========================================================
 
 COPY customer_claim_summary
-TO 'reports/customer_claim_summary.csv'
+TO 'C:/REPLACE_WITH_PROJECT_PATH/reports/customer_claim_summary.csv'
 WITH (FORMAT CSV, HEADER TRUE);
 
 
@@ -54,12 +61,12 @@ WITH (FORMAT CSV, HEADER TRUE);
 -- EXPORT 3: POLICY CLAIM SUMMARY
 -- ==========================================================
 -- Purpose:
--- Summarise claim activity and recorded claim amounts
--- by policy.
+-- Export policy-level claim metrics for reporting and
+-- further analysis.
 -- ==========================================================
 
 COPY policy_claim_summary
-TO 'reports/policy_claim_summary.csv'
+TO 'C:/REPLACE_WITH_PROJECT_PATH/reports/policy_claim_summary.csv'
 WITH (FORMAT CSV, HEADER TRUE);
 
 
@@ -67,12 +74,12 @@ WITH (FORMAT CSV, HEADER TRUE);
 -- EXPORT 4: CLAIM STATUS SUMMARY
 -- ==========================================================
 -- Purpose:
--- Compare recorded claim volumes and claim amounts
--- across claim statuses.
+-- Export recorded claim volumes and amounts grouped
+-- by claim status.
 -- ==========================================================
 
-COPY claim_status_summary
-TO 'reports/claim_status_summary.csv'
+COPY claims_status_summary
+TO 'C:/REPLACE_WITH_PROJECT_PATH/reports/claims_status_summary.csv'
 WITH (FORMAT CSV, HEADER TRUE);
 
 
@@ -80,12 +87,12 @@ WITH (FORMAT CSV, HEADER TRUE);
 -- EXPORT 5: CLAIM TYPE SUMMARY
 -- ==========================================================
 -- Purpose:
--- Compare recorded claim volumes and claim amounts
--- across claim types.
+-- Export recorded claim volumes and amounts grouped
+-- by claim type.
 -- ==========================================================
 
-COPY claim_type_summary
-TO 'reports/claim_type_summary.csv'
+COPY claims_type_summary
+TO 'C:/REPLACE_WITH_PROJECT_PATH/reports/claims_type_summary.csv'
 WITH (FORMAT CSV, HEADER TRUE);
 
 
@@ -93,15 +100,16 @@ WITH (FORMAT CSV, HEADER TRUE);
 -- EXPORT 6: CUSTOMER BUSINESS REVIEW
 -- ==========================================================
 -- Purpose:
--- Identify customers with more than one recorded claim
--- whose total recorded claim amount exceeds the average
--- total claim amount per customer among customers with
--- at least one recorded claim.
+-- Identify customers who:
+--   1. Have more than one recorded claim.
+--   2. Have a total recorded claim amount greater than
+--      the average total claim amount among customers
+--      with at least one recorded claim.
 --
--- Limitation:
--- This is an operational review based on the available
--- simulated data. It does not establish fraud, misconduct
--- or customer risk.
+-- Review considerations:
+-- This output highlights records for further operational
+-- review. It does not establish fraud, misconduct,
+-- customer risk or inappropriate claims activity.
 -- ==========================================================
 
 COPY (
@@ -111,6 +119,7 @@ COPY (
         FROM customer_claim_summary
         WHERE total_claims > 0
     )
+
     SELECT
         ccs.customer_id,
         ccs.first_name,
@@ -120,16 +129,20 @@ COPY (
         ccs.total_claims,
         ccs.total_claim_amount,
         ccs.average_claim_amount
+
     FROM customer_claim_summary AS ccs
+
     CROSS JOIN customer_statistics AS cs
+
     WHERE ccs.total_claims > 1
       AND ccs.total_claim_amount >
           cs.average_customer_claim_amount
+
     ORDER BY
         ccs.total_claim_amount DESC,
         ccs.customer_id
 )
-TO 'reports/customer_business_review.csv'
+TO 'C:/REPLACE_WITH_PROJECT_PATH/reports/customer_business_review.csv'
 WITH (FORMAT CSV, HEADER TRUE);
 
 
@@ -137,11 +150,13 @@ WITH (FORMAT CSV, HEADER TRUE);
 -- EXPORT 7: CLAIMS DATA QUALITY EXCEPTIONS
 -- ==========================================================
 -- Purpose:
--- Export claims with missing fields that may affect
--- reporting completeness or interpretation.
+-- Identify claims with missing reporting fields that may
+-- affect reporting completeness or interpretation.
 --
--- A missing settlement duration is an exception for review;
--- it does not by itself prove that a claim was mishandled.
+-- Review considerations:
+-- A missing settlement duration is an exception requiring
+-- review. It does not independently establish that a claim
+-- was mishandled.
 -- ==========================================================
 
 COPY (
@@ -157,7 +172,9 @@ COPY (
         incident_type,
         police_report,
         days_to_settle
-    FROM reporting_claims
+
+    FROM claims_reporting
+
     WHERE customer_id IS NULL
        OR policy_id IS NULL
        OR claim_date IS NULL
@@ -165,9 +182,10 @@ COPY (
        OR claim_amount IS NULL
        OR claim_status IS NULL
        OR days_to_settle IS NULL
+
     ORDER BY claim_id
 )
-TO 'reports/claims_data_quality_exceptions.csv'
+TO 'C:/REPLACE_WITH_PROJECT_PATH/reports/claims_data_quality_exceptions.csv'
 WITH (FORMAT CSV, HEADER TRUE);
 
 
@@ -175,7 +193,14 @@ WITH (FORMAT CSV, HEADER TRUE);
 -- END OF REPORT EXPORTS
 -- ==========================================================
 -- These statements export existing reporting outputs.
--- They do not create reporting tables or validate the
--- exported files after creation.
+--
+-- They do not:
+--   - Create the reporting tables.
+--   - Perform the ETL process.
+--   - Validate the exported CSV contents.
+--   - Automatically create the destination directory.
+--
+-- Export success depends on the availability of the
+-- reporting tables, valid destination paths and the
+-- PostgreSQL service's filesystem permissions.
 -- ==========================================================
-
