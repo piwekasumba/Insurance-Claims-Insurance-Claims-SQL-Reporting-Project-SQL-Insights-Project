@@ -1,10 +1,11 @@
+
 -- ==========================================================
 -- INSURANCE CLAIMS REPORTING OUTPUTS
 -- PostgreSQL
 --
 -- Purpose:
 -- Produce business-focused reporting outputs from the
--- reporting layer built from the simulated claims dataset.
+-- reporting layer built using the simulated claims dataset.
 --
 -- Prerequisite tables:
 --   1. reporting_claims
@@ -14,11 +15,16 @@
 -- Reporting focus:
 --   Claims severity, monthly performance, claim status,
 --   customer exposure, geography, policy type, settlement
---   performance and data-quality exceptions.
+--   performance, incident types and data-quality exceptions.
 --
--- Note:
--- These reports describe the supplied simulated dataset.
--- They do not establish real-world insurance risk or fraud.
+-- Reporting boundaries:
+--   - Results describe the supplied simulated dataset only.
+--   - Recorded claim values do not establish actual insurance
+--     risk, fraud, causation or future claim probability.
+--   - Claim counts represent records, including records with
+--     missing claim identifiers where applicable.
+--   - Missing information is retained or flagged where
+--     appropriate rather than silently treated as valid data.
 -- ==========================================================
 
 
@@ -81,8 +87,9 @@ ORDER BY
 -- Business question:
 -- How are claims distributed across their recorded statuses?
 --
--- claim_volume_percent is the percentage of all rows in
--- reporting_claims represented by each status.
+-- claim_volume_percent represents each status's share of
+-- all records in reporting_claims.
+--
 -- This is a status distribution, not an approval rate.
 -- ==========================================================
 
@@ -110,8 +117,8 @@ ORDER BY
 -- Business question:
 -- Which customers have the highest recorded total claim value?
 --
--- This is a ranking by recorded claim value. It is not a
--- finding of customer misconduct or fraud.
+-- This ranks recorded claim values. It is not a finding of
+-- customer misconduct or fraud.
 -- ==========================================================
 
 SELECT
@@ -138,19 +145,23 @@ LIMIT 10;
 -- How are recorded claims and claim values distributed
 -- across customer provinces?
 --
--- LEFT JOIN retains claims even when customer details or
--- province information are missing.
+-- LEFT JOIN retains claim records when customer details
+-- or province information are missing.
+--
+-- COUNT(*) counts claim records regardless of whether
+-- claim_id is populated.
 -- ==========================================================
 
 SELECT
     COALESCE(c.province, 'Unknown / Missing') AS province,
-    COUNT(rc.claim_id) AS total_claims,
+    COUNT(*) AS total_claims,
     SUM(rc.claim_amount) AS total_claim_amount,
     ROUND(AVG(rc.claim_amount), 2) AS average_claim_amount
 FROM reporting_claims AS rc
 LEFT JOIN customers AS c
     ON c.customer_id = rc.customer_id
-GROUP BY COALESCE(c.province, 'Unknown / Missing')
+GROUP BY
+    COALESCE(c.province, 'Unknown / Missing')
 ORDER BY
     total_claim_amount DESC NULLS LAST,
     province;
@@ -165,17 +176,21 @@ ORDER BY
 --
 -- Missing policy-type information is retained as a separate
 -- reporting category.
+--
+-- COUNT(*) counts claim records regardless of whether
+-- claim_id is populated.
 -- ==========================================================
 
 SELECT
     COALESCE(c.policy_type, 'Unknown / Missing') AS policy_type,
-    COUNT(rc.claim_id) AS total_claims,
+    COUNT(*) AS total_claims,
     SUM(rc.claim_amount) AS total_claim_amount,
     ROUND(AVG(rc.claim_amount), 2) AS average_claim_amount
 FROM reporting_claims AS rc
 LEFT JOIN customers AS c
     ON c.customer_id = rc.customer_id
-GROUP BY COALESCE(c.policy_type, 'Unknown / Missing')
+GROUP BY
+    COALESCE(c.policy_type, 'Unknown / Missing')
 ORDER BY
     total_claim_amount DESC NULLS LAST,
     policy_type;
@@ -187,9 +202,11 @@ ORDER BY
 -- Business question:
 -- What settlement times are recorded for approved claims?
 --
--- Claims with missing settlement days are not included in
--- the average, minimum or maximum settlement calculations.
--- Counts show how many approved claims have settlement data.
+-- Claims with missing settlement days are excluded from
+-- average, minimum and maximum settlement calculations.
+--
+-- Separate counts expose approved claims with and without
+-- recorded settlement durations.
 -- ==========================================================
 
 SELECT
@@ -235,17 +252,18 @@ FROM reporting_claims;
 -- Which recorded incident types have the highest total
 -- claim value in this dataset?
 --
--- This compares observed claim amounts; it does not measure
+-- This compares observed claim amounts. It does not measure
 -- incident probability or establish causation.
 -- ==========================================================
 
 SELECT
     COALESCE(incident_type, 'Unknown / Missing') AS incident_type,
-    COUNT(claim_id) AS total_claims,
+    COUNT(*) AS total_claims,
     SUM(claim_amount) AS total_claim_amount,
     ROUND(AVG(claim_amount), 2) AS average_claim_amount
 FROM reporting_claims
-GROUP BY COALESCE(incident_type, 'Unknown / Missing')
+GROUP BY
+    COALESCE(incident_type, 'Unknown / Missing')
 ORDER BY
     total_claim_amount DESC NULLS LAST,
     incident_type;
@@ -255,13 +273,13 @@ ORDER BY
 -- REPORT 9: DATA QUALITY EXCEPTIONS
 --
 -- Business question:
--- Which claims have missing information that may affect
--- reporting completeness or interpretation?
+-- Which claim records contain missing information that may
+-- affect reporting completeness or interpretation?
 --
--- Returns one row per identified issue. A claim can appear
--- more than once if it has multiple issues.
+-- Returns one row per identified issue. A claim record can
+-- appear more than once when it has multiple issues.
 --
--- Missing settlement days are flagged here only for approved
+-- Missing settlement days are flagged only for approved
 -- claims. Pending or rejected claims may legitimately have
 -- no recorded settlement duration.
 -- ==========================================================
@@ -278,6 +296,10 @@ SELECT
 FROM reporting_claims AS rc
 CROSS JOIN LATERAL (
     VALUES
+        (
+            'Missing claim ID',
+            rc.claim_id IS NULL
+        ),
         (
             'Missing claim date',
             rc.claim_date IS NULL
@@ -304,9 +326,9 @@ CROSS JOIN LATERAL (
             AND rc.days_to_settle IS NULL
         )
 ) AS issues(data_quality_issue, issue_found)
-WHERE issues.issue_found
+WHERE issues.issue_found IS TRUE
 ORDER BY
-    rc.claim_id,
+    rc.claim_id NULLS FIRST,
     issues.data_quality_issue;
 
 
