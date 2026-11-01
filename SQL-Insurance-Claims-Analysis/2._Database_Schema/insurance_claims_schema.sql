@@ -4,19 +4,33 @@
 -- PostgreSQL Relational Database Schema
 --
 -- Purpose:
--- Create the core tables for the simulated claims project.
+-- Create the relational database structure for the simulated
+-- insurance claims reporting project.
 --
 -- Tables:
 -- 1. customers
 -- 2. claims_raw
 --
--- The raw claims table preserves source values for validation.
+-- Design approach:
+-- - Maintain customer reference data.
+-- - Preserve source claim values for data-quality review.
+-- - Allow incomplete and unexpected claim values to be
+--   investigated through SQL validation queries.
+-- - Support reporting joins and commonly used filters.
+--
+-- Dataset:
+-- 20 customers
+-- 20 claims
+--
 -- ===========================================================
 
 
 -- ===========================================================
--- CUSTOMERS
--- Matches the 20-record customer dataset.
+-- 1. CUSTOMERS
+--
+-- Stores customer reference information.
+-- Customer IDs provide the unique identifier for each
+-- customer in the dataset.
 -- ===========================================================
 
 CREATE TABLE customers (
@@ -35,47 +49,57 @@ CREATE TABLE customers (
 
 
 -- ===========================================================
--- RAW CLAIMS
--- Matches the 20-record claims dataset.
+-- 2. RAW CLAIMS
 --
--- Nullable fields allow incomplete source records to be
--- retained and identified during data-quality checks.
+-- Stores the source claims dataset before data-quality
+-- validation and reporting analysis.
+--
+-- Design decision:
+-- Constraints that could reject unexpected source values
+-- are intentionally excluded from this table.
+--
+-- This allows validation queries to investigate:
+-- - Missing customer references.
+-- - Unexpected claim statuses.
+-- - Unexpected police report values.
+-- - Missing, zero or negative claim amounts.
+-- - Negative settlement durations.
+--
+-- claim_id remains the primary key because the current
+-- simulated dataset contains unique claim identifiers.
+--
+-- Note:
+-- Source values must still be compatible with their
+-- PostgreSQL column data types.
 -- ===========================================================
 
 CREATE TABLE claims_raw (
     claim_id INT PRIMARY KEY,
-    customer_id VARCHAR(10)
-        REFERENCES customers(customer_id),
+    customer_id VARCHAR(10),
     policy_id VARCHAR(20),
     claim_date DATE,
     claim_type VARCHAR(50),
-    claim_amount NUMERIC(12,2)
-        CHECK (claim_amount > 0),
-    claim_status VARCHAR(20)
-        CHECK (
-            claim_status IN (
-                'Pending',
-                'Approved',
-                'Rejected',
-                'Under Review'
-            )
-            OR claim_status IS NULL
-        ),
+    claim_amount NUMERIC(12,2),
+    claim_status VARCHAR(20),
     incident_city VARCHAR(100),
     incident_type VARCHAR(100),
-    police_report VARCHAR(10)
-        CHECK (
-            police_report IN ('Yes', 'No')
-            OR police_report IS NULL
-        ),
+    police_report VARCHAR(10),
     days_to_settle INT
-        CHECK (days_to_settle >= 0)
 );
 
 
 -- ===========================================================
--- INDEXES
--- Support common joins and reporting filters.
+-- 3. INDEXES
+--
+-- Support common reporting operations involving:
+-- - Customer-based joins.
+-- - Policy-based filtering.
+-- - Claim-date filtering.
+-- - Claim-status filtering.
+--
+-- These indexes provide useful access paths for reporting
+-- queries. Actual performance benefits depend on dataset
+-- size, query patterns and PostgreSQL query planning.
 -- ===========================================================
 
 CREATE INDEX idx_claims_raw_customer
@@ -90,6 +114,7 @@ CREATE INDEX idx_claims_raw_date
 CREATE INDEX idx_claims_raw_status
     ON claims_raw(claim_status);
 
-CREATE INDEX idx_customers_last_name
-    ON customers(last_name);
 
+-- ===========================================================
+-- END OF INSURANCE CLAIMS DATABASE SCHEMA
+-- ===========================================================
